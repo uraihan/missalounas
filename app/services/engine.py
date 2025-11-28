@@ -20,8 +20,8 @@ def get_restaurant_url(chain, id, lang):
     return url.format(id=id, lang=lang)
 
 
-def parse_restaurants(rest_list):
-    print("processing parse")
+def parse_restaurants(chain, rest_list):
+    print(f"Parsing {chain}...")
     weekly_menu = []
     for id, loc in rest_list.items():
         for lang in SUPPORTED_LANGS:
@@ -31,22 +31,19 @@ def parse_restaurants(rest_list):
                 response = requests.get(url)
                 response.raise_for_status()
                 response_json = json.loads(response.text)
-
-                if chain == 'juvenes':
-                    resp = juvenes.parse_response(id, lang, response_json)
-                if chain == 'compass':
-                    resp = compass_group.parse_response(
-                        id, lang, response_json)
-                if chain == 'sodexo':
-                    resp = sodexo.parse_response(id, lang, response_json)
-                # chain_list.extend(resp)
-
             except requests.RequestException as e:
                 print(f"Error fetching from URL: {e}")
                 raise
             except ValueError as e:
                 print(f"Error: {e}")
                 raise
+
+            if chain == 'juvenes':
+                resp = juvenes.parse_response(id, lang, response_json)
+            if chain == 'compass':
+                resp = compass_group.parse_response(id, lang, response_json)
+            if chain == 'sodexo':
+                resp = sodexo.parse_response(id, lang, response_json)
 
             weekly_menu.extend(resp)
 
@@ -58,22 +55,25 @@ def parse_restaurants(rest_list):
 
 
 if __name__ == "__main__":
-    # Parsing
+    # PARSING
+    city_data = []
     for city, rest_dict in CITIES:
-        city_menus = []
+        restaurant_menus = []
         for chain, rest_list in rest_dict.items():
-            weekly_menu = parse_restaurants(rest_list)
-            breakpoint()
-            city_menus.append(weekly_menu)
-        city_data = {'city': city, 'menu_list': city_menus}
+            weekly_menu = parse_restaurants(chain, rest_list)
+            restaurant_menus.extend(weekly_menu)
+        city_data.append({'city': city, 'restaurant_menus': restaurant_menus})
 
-    # Insert to SQL
+    # INSERT TO SQL
     # Create db table
+    breakpoint()
     db_path = os.path.abspath('mock_db.db')
     # if os.path.exists(db_path):
     #     os.remove(db_path)
     conn = sqlite3.connect(db_path)
     db_interface.create_tables(conn)
-    for city, _ in CITIES:
+    for item in city_data:
+        city = item['city']
+        weekly_menu = item['restaurant_menus']
         city_id = db_interface.insert_city(conn, city)
         db_interface.insert_restaurants(conn, city_id, weekly_menu)

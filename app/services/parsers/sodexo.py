@@ -1,0 +1,64 @@
+import jq
+
+from datetime import datetime, timedelta
+from dataclasses import asdict
+
+from app.models import unified_json
+from app.services import utils
+
+
+def get_restaurant_data(response_json):
+    restaurant_data = {}
+    weekly_menu = response_json['mealdates']
+    weekly_menu = jq.compile('''
+        .[] | del(.courses[] | .meal_category, .price,
+                  (.additionalDietInfo.dietcodeImages))
+    ''').input_value(weekly_menu).all()
+
+    # TODO:
+    restaurant_data['restaurant_name'] = response_json['meta']['ref_title']
+    generated_timestamp = response_json['meta']['generated_timestamp']
+    restaurant_data['datetime'] = datetime.fromtimestamp(
+        generated_timestamp)
+    restaurant_data['timeperiod'] = response_json['timeperiod']
+    restaurant_data['weekly_menus'] = [menu for menu in weekly_menu]
+
+    return restaurant_data
+
+
+def parse_response(id, lang, response_json):
+    restaurant_data = get_restaurant_data(response_json)
+
+    restaurant_name = restaurant_data['restaurant_name']
+    parsed_time = restaurant_data['datetime']
+    # time_period = restaurant_data['timeperiod']
+    year, week, _ = parsed_time.isocalendar()
+
+    menu_list = []
+    for num, day in enumerate(restaurant_data['weekly_menus']):
+        date = datetime.fromisocalendar(
+            year, week, num+1).strftime(utils.DATE_FORMAT)
+        for _, option in day['courses'].items():
+            food_name = option[f'title_{lang}']
+            menu_type = option['category']
+            if 'meal_category' in option.keys():
+                menu_type_id = option['meal_category']
+            else:
+                menu_type_id = 0
+
+            if 'dietcodes' in option.keys():
+                diets = option['dietcodes']
+            else:
+                diets = ""
+
+            food_item = unified_json.IndividualMenu(food_name,
+                                                    diets,
+                                                    date,
+                                                    menu_type,
+                                                    menu_type_id,
+                                                    lang)
+            menu_list.append(food_item)
+
+    parsed_json = unified_json.UnifiedJson(restaurant_name, menu_list)
+
+    return [asdict(parsed_json)]
