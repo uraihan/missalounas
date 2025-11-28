@@ -1,0 +1,79 @@
+import requests
+import json
+import db_interface
+import sqlite3
+import os
+
+from collections import defaultdict
+from parsers import juvenes, compass_group, sodexo
+
+from app.services import utils
+from app.services.config import CITIES, URLS, SUPPORTED_LANGS
+
+
+def get_restaurant_url(chain, id, lang):
+    url = URLS.get(chain)
+    if chain == "sodexo" and lang == "en":
+        lang = "/en/"
+    if chain == "sodexo" and lang == "fi":
+        lang = "/"
+    return url.format(id=id, lang=lang)
+
+
+def parse_restaurants(rest_list):
+    print("processing parse")
+    weekly_menu = []
+    for id, loc in rest_list.items():
+        for lang in SUPPORTED_LANGS:
+            try:
+                # use different url based on the name of the chain
+                url = get_restaurant_url(chain, id, lang=lang)
+                response = requests.get(url)
+                response.raise_for_status()
+                response_json = json.loads(response.text)
+
+                if chain == 'juvenes':
+                    resp = juvenes.parse_response(id, lang, response_json)
+                if chain == 'compass':
+                    resp = compass_group.parse_response(
+                        id, lang, response_json)
+                if chain == 'sodexo':
+                    resp = sodexo.parse_response(id, lang, response_json)
+                # chain_list.extend(resp)
+
+            except requests.RequestException as e:
+                print(f"Error fetching from URL: {e}")
+                raise
+            except ValueError as e:
+                print(f"Error: {e}")
+                raise
+
+            weekly_menu.extend(resp)
+
+    # compiled_dict[chain] = chain_list
+    # return compiled_dict
+    combined_menu = utils.combine_restaurants(weekly_menu)
+
+    return combined_menu
+
+
+if __name__ == "__main__":
+    # Parsing
+    for city, rest_dict in CITIES:
+        city_menus = []
+        for chain, rest_list in rest_dict.items():
+            weekly_menu = parse_restaurants(rest_list)
+            breakpoint()
+            city_menus.append(weekly_menu)
+        city_data = {'city': city, 'menu_list': city_menus}
+
+    # Insert to SQL
+    # Create db table
+    db_path = os.path.abspath('mock_db.db')
+    # if os.path.exists(db_path):
+    #     os.remove(db_path)
+    conn = sqlite3.connect(db_path)
+    db_interface.create_tables(conn)
+    for city, _ in CITIES:
+        city_id = db_interface.insert_city(conn, city)
+        db_interface.insert_restaurants(conn, city_id, weekly_menu)
