@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-# from sqlalchemy import create_engine, Column, Integer, String, Text
+
 
 # NOTE: database schema
 # Table City {
@@ -46,6 +46,12 @@ def create_tables(conn):
     cursor = conn.cursor()
 
     cursor.execute("PRAGMA foreign_keys = ON")
+
+    # Very dirty solution > need to come up with better one
+    cursor.execute("DROP TABLE IF EXISTS foods")
+    cursor.execute("DROP TABLE IF EXISTS restaurants")
+    cursor.execute("DROP TABLE IF EXISTS cities")
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS cities (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,19 +67,6 @@ def create_tables(conn):
             FOREIGN KEY (city_id) REFERENCES cities(id)
             )
     """)
-    # opening_hours VARCHAR(200),
-
-    # cursor.execute("""
-    #     CREATE TABLE IF NOT EXISTS menus (
-    #         id INTEGER PRIMARY KEY AUTOINCREMENT,
-    #         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    #         date VARCHAR(20),
-    #         lang VARCHAR(10),
-    #         menu_type VARCHAR(100),
-    #         restaurant_id INTEGER NOT NULL,
-    #         FOREIGN KEY (restaurant_id) REFERENCES restaurant(id)
-    #         )
-    # """)
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS foods (
@@ -90,18 +83,18 @@ def create_tables(conn):
             )
     """)
     conn.commit()
-    # menu_id INTEGER NOT NULL,
-    # FOREIGN KEY (menu_id) REFERENCES menu(id)
 
 
 def insert_city(conn, city):
     cursor = conn.cursor()
+
     cursor.execute("""
         INSERT INTO cities (name)
         VALUES (?)
     """, (city,))
-    city_id = cursor.lastrowid
+    conn.commit()
 
+    city_id = cursor.lastrowid
     return city_id
 
 
@@ -110,11 +103,14 @@ def insert_restaurants(conn, city_id, weekly_menu):
     for item in weekly_menu:
         restaurant_name = item['restaurant_name']
 
+        cursor = conn.cursor()
+
         cursor.execute("""
             INSERT INTO restaurants (name, city_id)
             VALUES (?, ?)
         """, (restaurant_name, city_id))
         restaurant_id = cursor.lastrowid
+        conn.commit()
 
         for option in item['menu_options']:
             food_name = option['food_name']
@@ -130,21 +126,4 @@ def insert_restaurants(conn, city_id, weekly_menu):
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """, (food_name, diets, date, lang, menu_type, menu_type_id,
                   restaurant_id))
-
-    conn.commit()
-
-
-# def insert_foods(conn, restaurant_id, food_name, diets, date, menu_type,
-#                  menu_type_id, lang):
-
-    # cursor.execute("""
-    #     INSERT INTO restaurants (id, name, city_id)
-    #     VALUES (?, ?, ?, ?)
-    # """, (restaurant_id, restaurant_name, city_id))
-    #
-    # for day in response['days']:
-    #     date = day['date']
-    #     cursor.execute("""
-    #         INSERT INTO menus (created_at, date, menu_type, lang, restaurant_id)
-    #         VALUES (?, ?, ?, ?, ?)
-    #     """, (created_at, date, ))
+            conn.commit()
