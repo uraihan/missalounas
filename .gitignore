@@ -19,3 +19,13 @@ wheels/
 
 # Database files
 *.db
+
+# Tailwind-related files
+coverage/
+.turbo
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+target/
+.debug/
