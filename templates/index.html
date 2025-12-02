@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block cards %}
+    {% for _, rest in menus.items() %}
+    <div class='card border-1 p-4'>
+        <h2 class="mb-4"> {{ rest['name'] }} </h2>
+        <div class="p-4">
+            {% if rest['menus'] %}
+                {% for menu_id, menus in rest['menus'].items() %}
+                <div class="grid grid-auto-rows border-y-[0.5px]">
+
+                    {% for food in menus %}
+                    <div class="flex justify-between items-center"
+                        <p class='flex-1'>{{ food['name'] }}</p>
+                        {% if food['diets'] != "()" %}
+                            <p class='text-right max-w-[50%] text-sm'>{{
+                            food['diets'] }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                </div>
+                {% endfor %}
+
+            {% else %}
+                <p>No menu found</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
+

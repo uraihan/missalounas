@@ -1,0 +1,89 @@
+@import 'tailwindcss';
+@plugin "daisyui";
+@plugin "daisyui" {
+    themes: cupcake --default, dark --prefersdark;
+}
+
+
+@utility navbar {
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+    @apply h-24 mb-4;
+}
+
+@theme {
+    /* Text Colours */
+    /* --color-p-10: oklch(10% 0.041 260.031); */
+    /* --color-p-30: oklch(30% 0.041 260.031); */
+    /* --color-a-70: oklch(70% 0.041 260.031); */
+    /* --color-p-90: oklch(90% 0.041 260.031); */
+    /* --color-p-100: oklch(100% 0.041 260.031); */
+
+    /* Spacing */
+    --spacing-1080: 1080px;
+
+    /* Default font */
+    --font-primary: "Noto Sans JP", "serif";
+    --font-secondary: "Fira Sans", "serif";
+
+    /* Typography (unused now) */
+    --h1: 600 3rem/1.2em --var(--font-secondary);
+    --h2: 600 2rem/1.2em --var(--font-secondary);
+    --p: 1rem/1.5rem --var(--font-primary);
+}
+
+@layer base {
+    /* h1 { */
+    /*     font: var(--h1) */
+    /* } */
+    /* h2 { */
+    /*     font: var(--h2) */
+    /* } */
+    /* p { */
+    /*     font: var(--p) */
+    /* } */
+    body {
+        text-wrap: balance;
+        /* Background and text colours */
+        @apply mx-[1.5rem] md:mx-[5rem];
+    }
+    h1 {
+        font-family: var(--font-primary);
+        font-weight: 600;
+        font-size: 3rem;
+        line-height: 1.2em;
+        @apply my-2;
+    }
+    h2 {
+        font-family: var(--font-primary);
+        font-weight: 600;
+        font-size: 1.8rem;
+        line-height: 1.2rem;
+        @apply my-2;
+    }
+    p {
+        font-family: var(--font-secondary);
+        font-size: 1rem;
+        line-height: 1.5rem;
+        @apply my-2;
+    }
+}
+
+@layer components {
+    .dropdown-button::after {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-left: 0.25rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z'/%3E%3C/svg%3E");
+        background-size: contain;
+        transition: transform 0.5s ease;
+    }
+    .dropdown:focus-within .dropdown-button::after {
+        transform: rotate(180deg);
+    }
+    /* .chevron { */
+    /*     transition: transform 0.5s ease; */
+    /* } */
+}

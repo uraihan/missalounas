@@ -1,0 +1,61 @@
+{% macro navbar(cities, selected_city, lang, date) %}
+    <nav class="navbar justify-between">
+        <div>
+            <a class="text-2xl" href="#"><strong>Missä Lounas??</strong></a>
+            <ul class="menu menu-horizontal items-center">
+                <li>
+                    <p>{{date}}</p>
+                </li>
+                {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
+                <li>
+                    <a href="{{ url_for('index', **build_url(day=day))}}">
+                        {{ day.capitalize() }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <ul class="menu menu-horizontal">
+                <li>
+                    <div class="dropdown dropdown-center">
+                        <div tabindex="0"
+                             class="flex text-lg items-center justify-center dropdown-button">{{ selected_city }}</div>
+                        <ul tabindex="-1"
+                            class="menu dropdown-content bg-base-200 shadow-2xl border-base-300 z-1">
+                            {% for c in cities %}
+                                <li>
+                                    <a class="hover:bg-primary"
+                                        href="{{ url_for('index',
+                                        **build_url(city=c['name'])) }}">{{ c['name'] }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <details>
+                        <summary class="text-lg">
+                            {% if lang == 'fi' %} FI {% else %} EN {%
+                            endif %}
+                        </summary>
+                        <ul class="z-[1]">
+                            {% for code in ['EN','FI'] %}
+                            <li>
+                                <a href="{{ url_for('index',
+                                    **build_url(lang=code.lower())) }}"
+                                   class="{% if selected_lang == code
+                                   %}bg-primary text-primary-content{%
+                               endif %} hover:bg-primary
+                               hover:text-primary-content">
+                                    {{code}}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% endmacro %}
