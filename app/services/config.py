@@ -18,19 +18,21 @@ helsinki = {"compass": {
     "3101": "Dipoli",
     "3208": "Metropolia"},
 
-    # "sodexo": {
-    # "1045996": "HY-Päärakennus",
-    # "68": "Ladonlukko",
-    # "158": "Myllypuro"}
+    "sodexo": {
+    "1045996": "HY-Päärakennus",
+    "68": "Ladonlukko",
+    "158": "Myllypuro"}
 }
 turku = {"juvenes": {"71": "Block"},
          "sodexo": {"160": "Turun-AMK"}
          }
-# session = requests.Session()
-# headers = {'Cache-Control': 'no-cache'}
+
 SUPPORTED_LANGS = ['en', 'fi']
 
-CITIES = [("Tampere", tampere), ("Helsinki", helsinki)]
+CITIES = [("Tampere", tampere),
+          ("Helsinki", helsinki),
+          ("Turku", turku)]
+
 URLS = {"juvenes":
         "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/93077/{id}?lang={lang}",
         "compass":
