@@ -6,14 +6,15 @@ import psycopg
 # from datetime import datetime
 # from sqlalchemy.orm import declarative_base, sessionmaker
 
-from core.config import db_type, db_name, db_user
+from core.config import db_type, db_name, db_user, db_pass
 # from app.models.db_schema import Cities, Restaurants, Foods
 
 # db_path = os.path.abspath('mock_db2.db')
 # conn = sqlite3.connect(db_path)
 
-
 db_string = f"dbname={db_name} user={db_user}"
+if db_pass:
+    db_string += f" password={db_pass}"
 
 
 def create_tables():

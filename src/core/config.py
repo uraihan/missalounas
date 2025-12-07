@@ -7,6 +7,9 @@ db_type = os.getenv("DB_TYPE")
 db_user = os.getenv("DB_USER")
 db_name = os.getenv("DB_NAME")
 
+if os.getenv("DB_PASSWORD"):
+    db_pass = os.getenv("DB_PASSWORD")
+
 DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
 DEFAULT_DAY = datetime.now().strftime(DATE_FORMAT)
