@@ -7,13 +7,23 @@ from collections import defaultdict
 from urllib.parse import urlencode
 
 # from app.services import utils
-from core.config import DEFAULT_CITY, DEFAULT_DAY, DATE_FORMAT, db_name, db_type, db_user, db_pass
+from core.config import (DEFAULT_CITY,
+                         DEFAULT_DAY,
+                         DATE_FORMAT,
+                         db_name,
+                         db_type,
+                         db_user,
+                         db_pass,
+                         db_url)
 
 app = Flask(__name__)
 
-db_string = f"dbname={db_name} user={db_user}"
-if db_pass:
-    db_string += f" password={db_pass}"
+if db_url:
+    db_string = db_url
+else:
+    db_string = f"dbname={db_name} user={db_user}"
+    if db_pass:
+        db_string += f" password={db_pass}"
 
 # def db_connection():
 #     conn = sqlite3.connect('mock_db.db')

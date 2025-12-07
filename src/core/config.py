@@ -3,12 +3,15 @@ from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
-db_type = os.getenv("DB_TYPE")
-db_user = os.getenv("DB_USER")
-db_name = os.getenv("DB_NAME")
+if os.getenv("DB_URL"):
+    db_url = os.getenv("DB_URL")
+else:
+    db_type = os.getenv("DB_TYPE")
+    db_user = os.getenv("DB_USER")
+    db_name = os.getenv("DB_NAME")
 
-if os.getenv("DB_PASSWORD"):
-    db_pass = os.getenv("DB_PASSWORD")
+    if os.getenv("DB_PASSWORD"):
+        db_pass = os.getenv("DB_PASSWORD")
 
 DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
