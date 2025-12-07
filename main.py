@@ -6,7 +6,7 @@ from collections import defaultdict
 from urllib.parse import urlencode
 
 # from app.services import utils
-from app.core.config import DEFAULT_CITY, DEFAULT_DAY, DATE_FORMAT
+from core.config import DEFAULT_CITY, DEFAULT_DAY, DATE_FORMAT
 
 app = Flask(__name__)
 

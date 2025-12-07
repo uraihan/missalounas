@@ -1,12 +1,15 @@
+import os
 from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
+db_type = os.getenv("DB_TYPE")
+db_user = os.getenv("DB_USER")
+db_name = os.getenv("DB_NAME")
 
 DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
 DEFAULT_DAY = datetime.now().strftime(DATE_FORMAT)
-
 
 # configuration for webscraper
 # Restaurant list on each cities

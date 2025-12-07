@@ -6,7 +6,7 @@ import os
 from parsers import juvenes, compass_group, sodexo
 
 from webscraper import utils
-from app.core.config import CITIES, URLS, SUPPORTED_LANGS
+from core.config import CITIES, URLS, SUPPORTED_LANGS
 from webscraper.db import db_interface
 
 

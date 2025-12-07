@@ -2,10 +2,7 @@ import jq
 import jsonschema
 
 # from .base import Restaurant
-from datetime import datetime
-from pprint import pformat
 from dataclasses import asdict
-from collections import defaultdict
 
 from webscraper import utils
 from webscraper.models import juvenes_response
