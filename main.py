@@ -1,22 +1,15 @@
-import sqlite3
 import psycopg
 import os
+import utils
 
 from psycopg.rows import dict_row
 from flask import Flask, render_template, request
 from flask_apscheduler import APScheduler
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
-from apscheduler.triggers.cron import CronTrigger
 
-from datetime import datetime, timedelta
-from collections import defaultdict
-from urllib.parse import urlencode
+from datetime import datetime
 
-# from app.services import utils
 from core.config import (DEFAULT_CITY,
                          DEFAULT_DAY,
-                         DATE_FORMAT,
                          db_string)
 
 app = Flask(__name__)
@@ -26,7 +19,6 @@ scheduler.init_app(app)
 scheduler.start()
 
 
-print(f"DB_URL = {db_string}")
 # def db_connection():
 #     conn = sqlite3.connect('mock_db.db')
 #     conn.row_factory = sqlite3.Row
@@ -35,88 +27,25 @@ print(f"DB_URL = {db_string}")
 
 @scheduler.task('cron',
                 id='running_webscraper',
-                day_of_week='sun',
-                hour='23',
-                minute='15')
+                day_of_week='mon',
+                hour='00',
+                minute='05')
 def run_webscraper():
-    os.system(' uv run src/webscraper/db/db_interface.py')
+    os.system('uv run src/webscraper/db/db_interface.py')
 
 
-def get_cities():
-    conn = psycopg.connect(db_string, row_factory=dict_row)
-    with conn:
-        cities = conn.execute('SELECT * FROM cities').fetchall()
+conn = psycopg.connect(db_string, row_factory=dict_row)
+ispopulated = ''
+with conn:
+    ispopulated = conn.execute('''
+            SELECT EXISTS (
+            SELECT 1 FROM pg_tables
+            WHERE schemaname = 'public'
+            )
+            ''').fetchone()
 
-    return cities
-
-
-def get_todays_menu(city, selected_lang, selected_date):
-    # current_date = datetime.now().strftime(utils.DATE_FORMAT)
-    conn = psycopg.connect(db_string, row_factory=dict_row)
-    # all_cities = get_cities()
-    with conn:
-        city_id = conn.execute('SELECT id FROM cities WHERE name = %s',
-                               (city,)).fetchone()
-        city_id = city_id['id']
-        query = '''
-            SELECT
-                r.id as restaurant_id,
-                r.name as restaurant_name,
-                f.menu_type as menu_type,
-                f.menu_type_id as menu_id,
-                f.name as menu_name,
-                f.diets as menu_diets
-            FROM restaurants r
-            LEFT JOIN foods f ON r.id = f.restaurant_id
-                AND f.date = %s
-                AND f.lang = %s
-            WHERE r.city_id = %s
-            ORDER BY r.name
-        '''
-
-        results = conn.execute(
-            query, (selected_date, selected_lang, city_id)).fetchall()
-
-    todays_menu = {}
-    for row in results:
-        restaurant_id = row['restaurant_id']
-
-        if restaurant_id not in todays_menu:
-            todays_menu[restaurant_id] = {
-                'name': row['restaurant_name'],
-                'menus': defaultdict(list)
-            }
-        if row['menu_name']:
-            menu_id = row['menu_id']
-            todays_menu[restaurant_id]['menus'][menu_id].append({
-                'name': row['menu_name'],
-                'diets': row['menu_diets']
-            })
-
-    for restaurant_id in todays_menu:
-        todays_menu[restaurant_id]['menus'] = dict(
-            todays_menu[restaurant_id]['menus'])
-
-    return todays_menu
-
-
-def get_current_week_date(weekday):
-    today = datetime.now()
-    startweek = today - timedelta(days=today.weekday())
-
-    weekday_map = {
-        'monday': 0,
-        'tuesday': 1,
-        'wednesday': 2,
-        'thursday': 3,
-        'friday': 4,
-        'saturday': 5,
-        'sunday': 6
-    }
-    offset = weekday_map.get(weekday.lower(), 0)
-    target_date = startweek + timedelta(days=offset)
-
-    return target_date.strftime(DATE_FORMAT)
+if not ispopulated['exists']:
+    run_webscraper()
 
 
 def build_url(**new_params):
@@ -178,14 +107,14 @@ def index(day=None, city=None, lang=None):
     selected_city = request.args.get('city', DEFAULT_CITY)
 
     # Date handling
-    selected_date = get_current_week_date(selected_day)
+    selected_date = utils.get_current_week_date(selected_day)
 
     # selected_date = '28.11.2025'
     # Handling city
-    cities = get_cities()
+    cities = utils.get_cities()
 
     # Retrieve menu based on requested filter
-    menus = get_todays_menu(selected_city, lang, selected_date)
+    menus = utils.get_todays_menu(selected_city, lang, selected_date)
 
     return render_template("index.html",
                            cities=cities,
@@ -197,5 +126,6 @@ def index(day=None, city=None, lang=None):
                            )
 
 
-if __name__ == "__main__":
-    app.run()
+# if __name__ == "__main__":
+#
+#     app.run()
