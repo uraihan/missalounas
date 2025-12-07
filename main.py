@@ -34,20 +34,6 @@ def run_webscraper():
     os.system('uv run src/webscraper/db/db_interface.py')
 
 
-conn = psycopg.connect(db_string, row_factory=dict_row)
-ispopulated = ''
-with conn:
-    ispopulated = conn.execute('''
-            SELECT EXISTS (
-            SELECT 1 FROM pg_tables
-            WHERE schemaname = 'public'
-            )
-            ''').fetchone()
-
-if not ispopulated['exists']:
-    run_webscraper()
-
-
 def build_url(**new_params):
     """
     Build a URL preserving current parameters and applying new ones.
