@@ -1,55 +1,59 @@
 import sqlite3
 from flask import Flask, render_template, request
+import psycopg
 
 from datetime import datetime, timedelta
 from collections import defaultdict
 from urllib.parse import urlencode
 
 # from app.services import utils
-from core.config import DEFAULT_CITY, DEFAULT_DAY, DATE_FORMAT
+from core.config import DEFAULT_CITY, DEFAULT_DAY, DATE_FORMAT, db_name, db_type, db_user
 
 app = Flask(__name__)
 
+db_string = f"dbname={db_name} user={db_user}"
 
-def db_connection():
-    conn = sqlite3.connect('mock_db.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+
+# def db_connection():
+#     conn = sqlite3.connect('mock_db.db')
+#     conn.row_factory = sqlite3.Row
+#     return conn
 
 
 def get_cities():
-    conn = db_connection()
-    cities = conn.execute('SELECT * FROM cities').fetchall()
-    conn.close()
+    conn = psycopg.connect(db_string)
+    with conn:
+        cities = conn.execute('SELECT * FROM cities').fetchall()
+
     return cities
 
 
 def get_todays_menu(city, selected_lang, selected_date):
     # current_date = datetime.now().strftime(utils.DATE_FORMAT)
-    conn = db_connection()
+    conn = psycopg.connect(db_string)
     # all_cities = get_cities()
-    city_id = conn.execute('SELECT id FROM cities WHERE name = ?',
-                           (city,)).fetchone()
-    city_id = city_id['id']
-    query = '''
-        SELECT
-            r.id as restaurant_id,
-            r.name as restaurant_name,
-            f.menu_type as menu_type,
-            f.menu_type_id as menu_id,
-            f.name as menu_name,
-            f.diets as menu_diets
-        FROM restaurants r
-        LEFT JOIN foods f ON r.id = f.restaurant_id
-            AND f.date = ?
-            AND f.lang = ?
-        WHERE r.city_id = ?
-        ORDER BY r.name
-    '''
+    with conn:
+        city_id = conn.execute('SELECT id FROM cities WHERE name = ?',
+                               (city,)).fetchone()
+        city_id = city_id['id']
+        query = '''
+            SELECT
+                r.id as restaurant_id,
+                r.name as restaurant_name,
+                f.menu_type as menu_type,
+                f.menu_type_id as menu_id,
+                f.name as menu_name,
+                f.diets as menu_diets
+            FROM restaurants r
+            LEFT JOIN foods f ON r.id = f.restaurant_id
+                AND f.date = ?
+                AND f.lang = ?
+            WHERE r.city_id = ?
+            ORDER BY r.name
+        '''
 
-    results = conn.execute(
-        query, (selected_date, selected_lang, city_id)).fetchall()
-    conn.close()
+        results = conn.execute(
+            query, (selected_date, selected_lang, city_id)).fetchall()
 
     todays_menu = {}
     for row in results:
