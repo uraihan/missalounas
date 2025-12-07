@@ -10,14 +10,14 @@
     <body>
         <header>
             {% import 'navbar.html' as navbar %}
-            {{ navbar.navbar(cities, selected_city, lang, date)}}
+            {{ navbar.navbar(cities, selected_city, day, lang, date)}}
         </header>
         <main>
             <section class='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-items-stretch gap-4'>
                 {% block cards %}{% endblock %}
             </section>
         </main>
-        <footer class="footer relative bottom-0 min-h-24">
+        <footer class="footer static bottom-0 min-h-24 mt-12">
             <aside class="grid-flow-col">
                 <p>
                     Found any mistakes? Let us know <a href="#"><u>here!</u></a>

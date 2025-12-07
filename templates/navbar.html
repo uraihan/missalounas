@@ -1,4 +1,4 @@
-{% macro navbar(cities, selected_city, lang, date) %}
+{% macro navbar(cities, selected_city, selected_day, lang, date) %}
     <nav class="navbar justify-between">
         <div>
             <a class="text-2xl" href="#"><strong>Missä Lounas??</strong></a>
@@ -8,9 +8,15 @@
                 </li>
                 {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
                 <li>
+                    {% if selected_day == day %}
+                    <a class="bg-primary" href="{{ url_for('index', **build_url(day=day))}}">
+                        {{ day.capitalize() }}
+                    </a>
+                    {% else %}
                     <a href="{{ url_for('index', **build_url(day=day))}}">
                         {{ day.capitalize() }}
                     </a>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>

@@ -2,7 +2,7 @@
 {% block cards %}
     {% for _, rest in menus.items() %}
     <div class='card border-1 p-4'>
-        <h2 class="mb-4"> {{ rest['name'] }} </h2>
+        <h2 class="mb-4 leading-10"> {{ rest['name'] }} </h2>
         <div class="p-4">
             {% if rest['menus'] %}
                 {% for menu_id, menus in rest['menus'].items() %}
