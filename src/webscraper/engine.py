@@ -54,6 +54,7 @@ def parse_restaurants(chain, rest_list):
 
 
 if __name__ == "__main__":
+    print("Running Restaurant Scraper...")
     # PARSING
     city_data = []
     for city, rest_dict in CITIES:
@@ -65,7 +66,7 @@ if __name__ == "__main__":
 
     # INSERT TO SQL
     # Create db table
-    breakpoint()
+    # breakpoint()
     db_interface.create_tables()
     for item in city_data:
         city = item['city']

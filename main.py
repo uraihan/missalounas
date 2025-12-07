@@ -31,7 +31,7 @@ scheduler.start()
                 hour='00',
                 minute='05')
 def run_webscraper():
-    os.system('uv run src/webscraper/db/db_interface.py')
+    os.system('uv run src/webscraper/engine.py')
 
 
 def build_url(**new_params):
