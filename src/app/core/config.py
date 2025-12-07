@@ -1,3 +1,14 @@
+from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEFAULT_CITY = "Tampere"
+DATE_FORMAT = "%d.%m.%Y"
+DEFAULT_DAY = datetime.now().strftime(DATE_FORMAT)
+
+
+# configuration for webscraper
 # Restaurant list on each cities
 tampere = {"juvenes": {
     "6": "Newton",

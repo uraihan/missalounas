@@ -3,8 +3,8 @@ import re
 from pprint import pformat
 from dataclasses import asdict
 
-from app.models import unified_json
-from app.services import utils
+from webscraper.models import unified_json
+from webscraper import utils
 
 
 def transform_response(parsed_response):

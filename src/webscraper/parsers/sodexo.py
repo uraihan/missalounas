@@ -3,8 +3,8 @@ import jq
 from datetime import datetime, timedelta
 from dataclasses import asdict
 
-from app.models import unified_json
-from app.services import utils
+from webscraper import utils
+from webscraper.models import unified_json
 
 
 def get_restaurant_data(response_json):

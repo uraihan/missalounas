@@ -1,0 +1,38 @@
+# NOTE: database schema
+# Table City {
+#   id int pk
+#   name varchar
+#   restaurantid int
+# }
+#
+# Table Restaurant {
+#   id int pk
+#   name varchar
+#   openingHours varchar
+#   cityid int
+# }
+#
+# Table Menu {
+#   id int pk
+#   createAt datetime
+#   day varchar
+#   menuType varchar -> lounas/vegan
+#   lang varchar
+#   restaurantid int
+# }
+#
+# Table Food {
+#   id int pk
+#   createAt datetime
+#   day varchar
+#   menuType varchar -> lounas/vegan
+#   name varchar
+#   diets varchar
+#   lang varchar
+#   menuid int
+# }
+# Ref: Restaurant.cityid > City.restaurantid
+#
+# Ref: Restaurant.id < Menu.restaurantid
+#
+# Ref: Menu.id < Food.menuid

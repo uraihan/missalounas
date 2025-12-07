@@ -1,8 +1,7 @@
 from collections import defaultdict
 from datetime import datetime
 
-
-DATE_FORMAT = "%d.%m.%Y"
+from app.core.config import DATE_FORMAT
 
 
 def combine_restaurants(weekly_menu):

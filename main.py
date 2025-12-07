@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from urllib.parse import urlencode
 
-from app.services import utils
-from app.api.config import DEFAULT_CITY, DEFAULT_DAY
+# from app.services import utils
+from app.core.config import DEFAULT_CITY, DEFAULT_DAY, DATE_FORMAT
 
 app = Flask(__name__)
 
@@ -90,7 +90,7 @@ def get_current_week_date(weekday):
     offset = weekday_map.get(weekday.lower(), 0)
     target_date = startweek + timedelta(days=offset)
 
-    return target_date.strftime(utils.DATE_FORMAT)
+    return target_date.strftime(DATE_FORMAT)
 
 
 def build_url(**new_params):

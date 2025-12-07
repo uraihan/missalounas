@@ -1,14 +1,13 @@
 import requests
 import json
-import db_interface
 import sqlite3
 import os
 
-from collections import defaultdict
 from parsers import juvenes, compass_group, sodexo
 
-from app.services import utils
-from app.services.config import CITIES, URLS, SUPPORTED_LANGS
+from webscraper import utils
+from app.core.config import CITIES, URLS, SUPPORTED_LANGS
+from webscraper.db import db_interface
 
 
 def get_restaurant_url(chain, id, lang):
@@ -67,13 +66,9 @@ if __name__ == "__main__":
     # INSERT TO SQL
     # Create db table
     breakpoint()
-    db_path = os.path.abspath('mock_db.db')
-    # if os.path.exists(db_path):
-    #     os.remove(db_path)
-    conn = sqlite3.connect(db_path)
-    db_interface.create_tables(conn)
+    db_interface.create_tables()
     for item in city_data:
         city = item['city']
         weekly_menu = item['restaurant_menus']
-        city_id = db_interface.insert_city(conn, city)
-        db_interface.insert_restaurants(conn, city_id, weekly_menu)
+        city_id = db_interface.insert_city(city)
+        db_interface.insert_restaurants(city_id, weekly_menu)

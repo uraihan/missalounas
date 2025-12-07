@@ -29,3 +29,6 @@ blob-report/
 playwright/.cache/
 target/
 .debug/
+
+# Environment variables
+.env
