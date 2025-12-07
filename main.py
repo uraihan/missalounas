@@ -1,6 +1,12 @@
 import sqlite3
-from flask import Flask, render_template, request
 import psycopg
+import os
+
+from flask import Flask, render_template, request
+from flask_apscheduler import APScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
 
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -17,6 +23,10 @@ from core.config import (DEFAULT_CITY,
                          db_url)
 
 app = Flask(__name__)
+scheduler = APScheduler()
+
+scheduler.init_app(app)
+scheduler.start()
 
 if db_url:
     db_string = db_url
@@ -29,6 +39,15 @@ else:
 #     conn = sqlite3.connect('mock_db.db')
 #     conn.row_factory = sqlite3.Row
 #     return conn
+
+
+@scheduler.task('cron',
+                id='running_webscraper',
+                day_of_week='sun',
+                hour='23',
+                minute='15')
+def run_webscraper():
+    os.system(' uv run src/webscraper/db/db_interface.py')
 
 
 def get_cities():
@@ -184,3 +203,7 @@ def index(day=None, city=None, lang=None):
                            day=selected_day,
                            date=selected_date
                            )
+
+
+if __name__ == "__main__":
+    app.run()
