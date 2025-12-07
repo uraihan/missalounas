@@ -2,6 +2,7 @@ import sqlite3
 import psycopg
 import os
 
+from psycopg.rows import dict_row
 from flask import Flask, render_template, request
 from flask_apscheduler import APScheduler
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -42,7 +43,7 @@ def run_webscraper():
 
 
 def get_cities():
-    conn = psycopg.connect(db_string)
+    conn = psycopg.connect(db_string, row_factory=dict_row)
     with conn:
         cities = conn.execute('SELECT * FROM cities').fetchall()
 
@@ -51,7 +52,7 @@ def get_cities():
 
 def get_todays_menu(city, selected_lang, selected_date):
     # current_date = datetime.now().strftime(utils.DATE_FORMAT)
-    conn = psycopg.connect(db_string)
+    conn = psycopg.connect(db_string, row_factory=dict_row)
     # all_cities = get_cities()
     with conn:
         city_id = conn.execute('SELECT id FROM cities WHERE name = %s',

@@ -2,9 +2,7 @@ import sqlite3
 import os
 import psycopg
 
-# from psycopg_pool import ConnectionPool
-# from datetime import datetime
-# from sqlalchemy.orm import declarative_base, sessionmaker
+from psycopg.rows import dict_row
 
 from core.config import db_string
 
@@ -13,7 +11,7 @@ from core.config import db_string
 
 
 def create_tables():
-    conn_pg = psycopg.connect(db_string)
+    conn_pg = psycopg.connect(db_string, row_factory=dict_row)
     with conn_pg as conn:
 
         cursor = conn.cursor()
@@ -96,7 +94,7 @@ def create_tables():
 
 
 def insert_city(city):
-    conn_pg = psycopg.connect(db_string)
+    conn_pg = psycopg.connect(db_string, row_factory=dict_row)
     with conn_pg as conn:
 
         # cursor.execute("SELECT id FROM cities WHERE name = ?", (city,))
@@ -111,14 +109,14 @@ def insert_city(city):
             RETURNING id
         """, (city,))
 
-        city_id, = cursor.fetchone()
+        city_id = cursor.fetchone()['id']
         conn.commit()
 
     return city_id
 
 
 def insert_restaurants(city_id, weekly_menu):
-    conn_pg = psycopg.connect(db_string)
+    conn_pg = psycopg.connect(db_string, row_factory=dict_row)
     with conn_pg as conn:
         for item in weekly_menu:
             restaurant_name = item['restaurant_name']
@@ -138,7 +136,7 @@ def insert_restaurants(city_id, weekly_menu):
                 VALUES (%s, %s)
                 RETURNING id
             """, (restaurant_name, city_id))
-            restaurant_id, = cursor.fetchone()
+            restaurant_id = cursor.fetchone()['id']
             conn.commit()
 
             # SELECT ?, ?
