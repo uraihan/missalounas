@@ -16,11 +16,7 @@ from urllib.parse import urlencode
 from core.config import (DEFAULT_CITY,
                          DEFAULT_DAY,
                          DATE_FORMAT,
-                         db_name,
-                         db_type,
-                         db_user,
-                         db_pass,
-                         db_url)
+                         db_string)
 
 app = Flask(__name__)
 scheduler = APScheduler()
@@ -28,13 +24,8 @@ scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
-if db_url:
-    db_string = db_url
-else:
-    db_string = f"dbname={db_name} user={db_user}"
-    if db_pass:
-        db_string += f" password={db_pass}"
 
+print(f"DB_URL = {db_string}")
 # def db_connection():
 #     conn = sqlite3.connect('mock_db.db')
 #     conn.row_factory = sqlite3.Row
@@ -63,7 +54,7 @@ def get_todays_menu(city, selected_lang, selected_date):
     conn = psycopg.connect(db_string)
     # all_cities = get_cities()
     with conn:
-        city_id = conn.execute('SELECT id FROM cities WHERE name = ?',
+        city_id = conn.execute('SELECT id FROM cities WHERE name = %s',
                                (city,)).fetchone()
         city_id = city_id['id']
         query = '''
@@ -76,9 +67,9 @@ def get_todays_menu(city, selected_lang, selected_date):
                 f.diets as menu_diets
             FROM restaurants r
             LEFT JOIN foods f ON r.id = f.restaurant_id
-                AND f.date = ?
-                AND f.lang = ?
-            WHERE r.city_id = ?
+                AND f.date = %s
+                AND f.lang = %s
+            WHERE r.city_id = %s
             ORDER BY r.name
         '''
 
