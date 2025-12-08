@@ -37,6 +37,7 @@ COPY --from=tailwind-builder /app/static/main.css ./static/main.css
 
 RUN echo '#!/bin/bash\n\
 set -e\n\
+source venv/bin/activate\n\
 echo "Checking database..."\n\
 uv run src/core/db_check.py\n\
 echo "Starting Gunicorn server..."\n\
@@ -45,4 +46,4 @@ exec gunicorn --bind 0.0.0.0:$PORT --timeout 120 --access-logfile main:app\n\
 
 EXPOSE 8080
 
-CMD ["sh", "/app/start.sh"]
+CMD ["/app/start.sh"]
