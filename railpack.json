@@ -1,4 +1,9 @@
 {
+    "provider": ["node", "python"],
+    "packages": {
+        "node": "22",
+        "python": "3.13"
+    },
     "steps": {
         "install": {
             "commands": ["npm install", "uv sync --locked --no-dev --no-install-project"]
