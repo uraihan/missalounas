@@ -1,0 +1,13 @@
+{
+    "steps": {
+        "install": {
+            "commands": ["npm install", "uv sync --locked --no-dev --no-install-project"]
+        },
+        "build": {
+            "commands": ["npx tailwindcss -i ./static/tailwind.css -o ./static/main.css --minify", "uv sync --locked --no-dev --no-editable"]
+        }
+    },
+    "deploy": {
+        "startCommand": "uv run src/core/db_check.py && gunicorn --bind 0.0.0.0:$PORT main:app"
+    }
+}
