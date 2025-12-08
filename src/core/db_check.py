@@ -1,5 +1,5 @@
 import psycopg
-import main
+import os
 
 from psycopg.rows import dict_row
 from core.config import db_string
@@ -16,4 +16,4 @@ with conn:
 
 if not ispopulated['exists']:
     # breakpoint()
-    main.run_webscraper()
+    os.system('uv run src/webscraper/engine.py')
