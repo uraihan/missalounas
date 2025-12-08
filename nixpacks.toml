@@ -1,2 +1,0 @@
-[start]
-cmd = "gunicorn -c ./src/core/gunicorn.config.py main:app"
