@@ -1,0 +1,47 @@
+#### BUILDING TAILWIND CSS #####
+FROM node:20-alpine AS tailwind-builder
+
+WORKDIR /app
+
+# Copy nodejs dependency
+COPY package*.json ./
+
+# Install nodejs dependency
+RUN npm install
+
+# Copy necessary Tailwind CSS files to generate main.css
+COPY static/tailwind.css ./static/
+COPY templates/ ./templates/
+
+RUN npx tailwindcss -i ./static/tailwind.css -o ./static/main.css --minify
+
+##### BUILDING PYTHON #####
+FROM python:3.12-slim-trixie
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    # postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+COPY . /app
+
+RUN uv sync --locked
+
+COPY . .
+
+COPY --from=tailwind-builder /app/static/main.css ./static/main.css
+
+RUN echo '#!/bin/bash\n\
+set -e\n\
+echo "Checking database..."\n\
+python src/checkdb.py\n\
+echo "Starting Gunicorn server..."\n\
+exec gunicorn --bind 0.0.0.0:$PORT --workers 4 --threads 2 --timeout 120 --access-logfile - --error-logfile - app:app\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+EXPOSE 8080
+
+CMD ["sh", "/app/start.sh"]
