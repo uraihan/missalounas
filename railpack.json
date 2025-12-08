@@ -2,11 +2,12 @@
     "provider": "node",
     "packages": {
         "node": "22",
-        "python": "3.13"
+        "python": "3.13",
+        "uv": "0.9.16"
     },
     "steps": {
         "install": {
-            "commands": ["npm install", "uv sync --locked --no-dev --no-install-project"]
+            "commands": ["npm install --omit=dev", "uv sync --locked --no-dev --no-install-project"]
         },
         "build": {
             "commands": ["npx tailwindcss -i ./static/tailwind.css -o ./static/main.css --minify", "uv sync --locked --no-dev --no-editable"]
