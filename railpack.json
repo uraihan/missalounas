@@ -7,7 +7,7 @@
     },
     "steps": {
         "install": {
-            "inputs": [{"include": ["/root/"]}]
+            "inputs": [{"include": ["/root/"]}],
             "commands": ["npm install --omit=dev", "uv sync --locked --no-dev --no-install-project"]
         },
         "build": {
