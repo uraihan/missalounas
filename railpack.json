@@ -6,7 +6,7 @@
         "uv": "0.9.16"
     },
     "steps": {
-        "inputs": [{"include": ["/root/"]}],
+        "include": ["/"],
         "install": {
             "commands": ["npm install --omit=dev", "uv sync --locked --no-dev --no-install-project"]
         },
