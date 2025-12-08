@@ -28,7 +28,8 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 COPY . /app
 
-RUN uv sync --locked
+RUN uv sync --locked --no-dev --no-install-project
+RUN uv sync --locked --no-dev --no-editable
 
 COPY . .
 
@@ -37,7 +38,7 @@ COPY --from=tailwind-builder /app/static/main.css ./static/main.css
 RUN echo '#!/bin/bash\n\
 set -e\n\
 echo "Checking database..."\n\
-python src/core/db_check.py\n\
+uv run src/core/db_check.py\n\
 echo "Starting Gunicorn server..."\n\
 exec gunicorn --bind 0.0.0.0:$PORT --timeout 120 --access-logfile main:app\n\
 ' > /app/start.sh && chmod +x /app/start.sh
