@@ -10,10 +10,10 @@ COPY package*.json ./
 RUN npm install
 
 # Copy necessary Tailwind CSS files to generate main.css
-COPY static/tailwind.css ./static/
+COPY static/daisy.css ./static/
 COPY templates/ ./templates/
 
-RUN npx tailwindcss -i ./static/tailwind.css -o ./static/main.css --minify
+RUN npx tailwindcss -i ./static/daisy.css -o ./static/main.css --minify
 
 ##### BUILDING PYTHON #####
 FROM python:3.12-slim-trixie
