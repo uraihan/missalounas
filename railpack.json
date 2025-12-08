@@ -1,5 +1,5 @@
 {
-    "provider": ["node", "python"],
+    "provider": "node",
     "packages": {
         "node": "22",
         "python": "3.13"
