@@ -37,7 +37,7 @@ COPY --from=tailwind-builder /app/static/main.css ./static/main.css
 
 RUN echo '#!/bin/bash\n\
 set -e\n\
-source venv/bin/activate\n\
+source /app/.venv/bin/activate\n\
 echo "Checking database..."\n\
 uv run src/core/db_check.py\n\
 echo "Starting Gunicorn server..."\n\
