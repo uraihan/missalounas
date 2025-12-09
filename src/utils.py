@@ -36,7 +36,7 @@ def get_todays_menu(city, selected_lang, selected_date):
                 AND f.date = %s
                 AND f.lang = %s
             WHERE r.city_id = %s
-            ORDER BY r.name
+            ORDER BY r.name, f.created_at
         '''
 
         results = conn.execute(
