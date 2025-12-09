@@ -1,4 +1,4 @@
-# NOTE: database schema
+# NOTE: database schema design
 # Table City {
 #   id int pk
 #   name varchar

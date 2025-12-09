@@ -7,8 +7,7 @@ from webscraper.models import unified_json
 from webscraper import utils
 
 
-def transform_response(parsed_response):
-    restaurant_name = parsed_response['RestaurantName']
+def transform_response(restaurant_name, area_name, parsed_response):
     lang = parsed_response['lang']
     menu_options = []
 
@@ -31,12 +30,22 @@ def transform_response(parsed_response):
                                                         menu_type_id,
                                                         lang)
                 menu_options.append(menu_item)
-    restaurant_dict = unified_json.UnifiedJson(restaurant_name,
-                                               menu_options)
+    restaurant_dict = unified_json.UnifiedJson(
+        restaurant_name, area_name, menu_options)
     return asdict(restaurant_dict)
 
 
-def parse_response(id, lang, response_json):
+def parse_response(restaurant_name, area_name, lang, response_json):
+    """Parse JSON response from Compass Group.
+    Params:
+        id: Restaurant id to be queried into API.
+        area_name: Area that the restaurant belongs to.
+        response_json: A JSON response from Compass Group.
+
+    Returns:
+        parsed_json: A parsed JSON object hat follows the JsonTransform
+        specification.
+    """
     simplified_resp = jq.compile('''
         del(. | .PriceHeader,
             (.MenusForDays[].SetMenus[].SortOrder))
@@ -44,12 +53,6 @@ def parse_response(id, lang, response_json):
     simplified_resp = simplified_resp[0]
     simplified_resp['lang'] = lang
 
-    formatted_response = transform_response(simplified_resp)
+    formatted_response = transform_response(
+        restaurant_name, area_name, simplified_resp)
     return [formatted_response]
-
-    with open('compass_formatted_response.txt', 'w') as f:
-        f.write(pformat(formatted_response, width=140))
-
-
-# for city in RAVINTOLAT:
-#     parse_compass(city)

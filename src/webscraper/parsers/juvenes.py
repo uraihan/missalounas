@@ -1,98 +1,66 @@
 import jq
 import jsonschema
 
-# from .base import Restaurant
 from dataclasses import asdict
+from types import SimpleNamespace
 
 from webscraper import utils
-from webscraper.models import juvenes_response
-from webscraper.models import unified_json
-
-# RESTAURANT_NAMES = {"22": "Arvo Cafe Lea",
-#                     "56": "Arvo",
-#                     "7": "Alakuppila",
-#                     "27": "YR Henkilöstolounas",
-#                     "56": "Yliopiston Ravintola",
-#                     "120": "YR Yläkuppila",
-#                     "22": "YR Fusion",
-#                     "56": "Newton",
-#                     "110": "Newton",
-#                     "112": "Cafe Konehuone"}
-
-# class Juvenes(Restaurant):
+from webscraper.models import juvenes_response, unified_json
+from webscraper.models.juvenes_lookup import RESTAURANT_UNIQUE_IDS
 
 
-def get_restaurant_data(response_json):
-    """Get restaurant data from raw JSON response.
+def get_essential_chunk(response, sub_rest_id):
+    response_object = SimpleNamespace(response[0])
+    result = []
+    for id in sub_rest_id:
+        for menu_type in response_object.menuTypes:
+            if menu_type.get('menuTypeId') == id:
+                result.append(menu_type)
+
+    return result
+
+
+def get_restaurant_data(restaurant_name, response_json):
+    """Get the relevant restaurant data from raw JSON response.
     Params:
+        restaurant_name: Name of restaurant associated with the provided
+            response_json.
         response_json: Raw JSON response from the API
 
     Returns:
         restaurant_data: Trimmed down version of the JSON response.
     """
-    restaurant_data = []
+    sub_restaurant_id = RESTAURANT_UNIQUE_IDS.get(restaurant_name)
+    essential_chunk = get_essential_chunk(response_json, sub_restaurant_id)
     simplified_resp = jq.compile('''
-        [.[].menuTypes[] | {menuTypeName: .menuTypeName} + .menus[]]
-        | del(.[] | .menuTypeId, .menuId, .menuAdditionalName,
-              .menuName,
-              (.days[]| .weekday, .lang),
+        del(.[].menus[] | .menuId, .menuAdditionalName, .menuName,
+              (.days[] | .weekday, .lang),
               (.days[].mealoptions[] | .orderNumber),
               (.days[].mealoptions[].menuItems[] | .orderNumber,
                .portionSize, .images))
+        | map(.menus = [.menus[] | . + .days[0] | del(.days)])
+        | map(.restaurantUniqueId = .menuTypeId | del(.menuTypeId))
         | .[]
-    ''').input_value(response_json).all()
+    ''').input_value(essential_chunk).all()
 
+    restaurant_data = []
     for item in simplified_resp:
-        if item['menuTypeName'] == 'Ateriapalvelut koulu':
-            continue
-        else:
-            for day in item['days']:
-                response_format = "%Y%m%d"
-                # probably can refactor this (or separate as a model
-                # module)
-                # date_format = internal_json.DATE_FORMAT
-                # datetime_fmt = datetime.strptime(
-                #     str(day['date']), response_format)
-                # datetime_fmt = f"{datetime_fmt.strftime(date_format)}"
-                day['date'] = utils.format_date(day['date'],
-                                                response_format)
-            restaurant_data.append(item)
+        for menu in item['menus']:
+            response_format = "%Y%m%d"
+            menu['date'] = utils.format_date(menu['date'],
+                                             response_format)
+        restaurant_data.append(item)
 
     return restaurant_data
     # maybe we can use generator function here?
 
 
-def check_restaurant_name(id, menu_type):
-    # Simplify this a bit better
-    restaurant_name = menu_type
-    if restaurant_name == "Lounas":
-        if id == "6":
-            restaurant_name = "Newton"
-        if id == "13":
-            restaurant_name = "Yliopiston Ravintola"
-        if id == "5":
-            restaurant_name = "Arvo"
-        if id == "72":
-            restaurant_name = "Rata"
-        if id == "33":
-            restaurant_name = "Frenckell"
-
-    if restaurant_name == "Kasvis":
-        if id == "6":
-            restaurant_name = "Newton"
-
-    if restaurant_name == "Fusion kitchen":
-        if id == "5":
-            restaurant_name = "Arvo"
-        if id == "13":
-            restaurant_name = "YR Fusion Kitchen"
-
-    return restaurant_name
-
-
-def parse_response(id, lang, response_json):
+def parse_response(restaurant_name, area_name, lang, response_json):
     """Parse JSON response from Juvenes.
     Params:
+        id: Restaurant id to be queried into API.
+        restaurant_name: Name of restaurant to be parsed.
+        area_name: Area that the restaurant belongs to.
         response_json: A JSON response from Juvenes.
 
     Returns:
@@ -101,45 +69,56 @@ def parse_response(id, lang, response_json):
     """
 
     # for debug purpose, use a test json file
-    # response_json = json.load(open("ravintola-newton-6.json"))
 
     try:
-        # Validate response
+        # Validate response (could be replaced by pydantic?)
         jsonschema.validate(response_json, schema=juvenes_response.SCHEMA)
-        print("200: JSON Data is valid!")
-
-        restaurant_data = get_restaurant_data(response_json)
 
         # with open('oneline_response.txt', 'w') as f:
         #     f.write(str(restaurant_data[0]))
         # breakpoint()
 
     except jsonschema.exceptions.ValidationError as e:
-        print(f"500: Response error. {e.message}")
+        print(f"JSON data does not match intended schema. {e.message}")
 
+    restaurant_data = get_restaurant_data(restaurant_name, response_json)
     parsed_json = []
-    for x in restaurant_data:
-        menu_type = x['menuTypeName']
-        restaurant_name = check_restaurant_name(id, menu_type)
-        food_list = []
+    if not restaurant_data:
+        # NOTE: If JSON response is an empty array, individually
+        # assign UnifiedJson object (?)
+        no_menu = unified_json.IndividualMenu(food_name=None,
+                                              diets=None,
+                                              date=None,
+                                              menu_type=None,
+                                              menu_type_id=None,
+                                              lang=lang)
+        parsed_json.append(
+            asdict(unified_json.UnifiedJson(restaurant_name=restaurant_name,
+                                            area=area_name,
+                                            menu_options=[no_menu]
+                                            )))
+    else:
+        for data in restaurant_data:
+            menu_type = data.get('menuTypeName')
+            food_list = [
+                unified_json.IndividualMenu(food_name=item.get('name'),
+                                            diets=item.get('diets'),
+                                            date=day.get('date'),
+                                            menu_type=menu_type,
+                                            menu_type_id=option.get('id'),
+                                            lang=lang)
+                for day in data.get('menus')
+                for option in day.get('mealoptions')
+                for item in option.get('menuItems')
+            ]
 
-        for day in x['days']:
-            date = day['date']
-            # lang = day['lang']
-            for option in day['mealoptions']:
-                menu_type_id = option['id']
-                for item in option['menuItems']:
-                    food_name = item['name']
-                    diets = item['diets']
-                    food_item = unified_json.IndividualMenu(
-                        food_name, diets, date, menu_type, menu_type_id, lang)
-                    food_list.append(food_item)
+            restaurant_object = unified_json.UnifiedJson(
+                restaurant_name, area_name, food_list)
+            parsed_json.append(asdict(restaurant_object))
 
-        restaurant_object = unified_json.UnifiedJson(
-            restaurant_name, food_list)
-        parsed_json.append(asdict(restaurant_object))
+    if parsed_json:
+        parsed_json = utils.combine_restaurants(parsed_json)
 
-    parsed_json = utils.combine_restaurants(parsed_json)
+    print(f"Restaurant: {restaurant_name}\nLength of combined json: {
+          len(parsed_json)}")
     return parsed_json
-    # with open('response.txt', 'w') as f:
-    #     f.write(pformat(restaurant_data, width=140))

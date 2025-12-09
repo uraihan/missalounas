@@ -18,6 +18,7 @@ class IndividualMenu:
 @dataclass
 class UnifiedJson:
     restaurant_name: str
+    area: str
     menu_options: List[IndividualMenu]
 
 

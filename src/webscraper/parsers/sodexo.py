@@ -26,7 +26,17 @@ def get_restaurant_data(response_json):
     return restaurant_data
 
 
-def parse_response(id, lang, response_json):
+def parse_response(id, area_name, lang, response_json):
+    """Parse JSON response from Sodexo.
+    Params:
+        id: Restaurant id to be queried into API.
+        area_name: Area that the restaurant belongs to.
+        response_json: A JSON response from Sodexo.
+
+    Returns:
+        parsed_json: A parsed JSON object hat follows the JsonTransform
+        specification.
+    """
     restaurant_data = get_restaurant_data(response_json)
 
     restaurant_name = restaurant_data['restaurant_name']
@@ -59,6 +69,7 @@ def parse_response(id, lang, response_json):
                                                     lang)
             menu_list.append(food_item)
 
-    parsed_json = unified_json.UnifiedJson(restaurant_name, menu_list)
+    parsed_json = unified_json.UnifiedJson(
+        restaurant_name, area_name, menu_list)
 
     return [asdict(parsed_json)]

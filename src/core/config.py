@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from dotenv import load_dotenv
+from types import SimpleNamespace
 
 load_dotenv()
 if os.getenv("DB_URL"):
@@ -22,37 +23,115 @@ DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
 DEFAULT_DAY = datetime.now().strftime(DATE_FORMAT)
 
+SUPPORTED_LANGS = ['en', 'fi']
 # configuration for webscraper
 # Restaurant list on each cities
-tampere = {"juvenes": {
-    "6": "Newton",
-    "13": "keskusta",
-    "5": "Arvo",
-    "72": "Rata",
-    "33": "Frenckell"},
-    "compass": {"0812": "Reaktori", "0815": "Minerva"},
-    "sodexo": {"116": "Linna", "111": "Hertsi"}
-}
-helsinki = {"compass": {
-    "3087": "A-Bloc",
-    "3704": "Töölö-37",
-    "0199": "TUAS",
-    "0190": "Alvari",
-    "3003": "Arcada",
-    "0083": "Opetustalo",
-    "3101": "Dipoli",
-    "3208": "Metropolia"},
+tampere = [
+    {
+        "areaName": "Hervanta",
+        "restaurants": {
+            "juvenes": {"Newton": "6",
+                        "Konehuone": "6"},
+            "compass": {"Reaktori": "0812"},
+            "sodexo": {"Hertsi": "111"}
+        }
+    },
+    {
+        "areaName": "Keskusta",
+        "restaurants": {
+            "juvenes": {
+                "Alakuppila": "13",
+                "Yliopiston Ravintola": "13",
+                "YR Yläkuppila": "13",
+                "YR Fusion Kitchen": "13",
+                "Rata": "72",
+                "Frenckell": "33"
+            },
+            "compass": {"Minerva": "0815"},
+            "sodexo": {"Linna": "116"}
+        }
+    },
+    {
+        "areaName": "TAYS",
+        "restaurants": {
+            "juvenes": {"Arvo": "5"},
+            "compass": {"Reaktori": "0812", "Minerva": "0815"},
+            "sodexo": {"Linna": "116", "Hertsi": "111"}
+        }
+    }
+]
 
-    "sodexo": {
-    "1045996": "HY-Päärakennus",
-    "68": "Ladonlukko",
-    "158": "Myllypuro"}
-}
-turku = {"juvenes": {"71": "Block"},
-         "sodexo": {"160": "Turun-AMK"}
-         }
+helsinki = [
+    {
+        "areaName": "Keskusta",
+        "restaurants": {
+            "sodexo": {
+                "HY-Päärakennus": "1045996"
+            }
+        }
+    },
+    {
+        "areaName": "Otaniemi",
+        "restaurants": {
+            "compass": {
+                "A-Bloc": "3087",
+                "TUAS": "0199",
+                "Alvari": "0190",
+                "Dipoli": "3101"
+            }
+        }
+    },
+    {
+        "areaName": "Töölö",
+        "restaurants": {
+            "compass": {
+                "Töölö-37": "3704",
+                "Hanken": "3406",
+                "Tempo": "1252"
+            }
+        }
+    },
+    {
+        "areaName": "Arabia & Kumpula",
+        "restaurants": {
+            "compass": {"Arcada": "3003"}
+        }
+    },
+    {
+        "areaName": "Itä-Helsinki",
+        "restaurants": {
+            "compass": {"Opetustalo": "0083"},
+            "sodexo": {"Myllypuro": "158"}
+        }
+    },
+    {
+        "areaName": "Viikki",
+        "restaurants": {
+            "sodexo": {"Ladonlukko": "68"}
+        }
+    },
+]
 
-SUPPORTED_LANGS = ['en', 'fi']
+# helsinki = {"compass": {
+#     "3208": "Metropolia"},
+#
+# }
+turku = [
+    {
+        "areaName": "TYS Nummenranta",
+        "restaurants": {
+            "juvenes": {"Block": "71",
+                        "Block Fusion": "71"},
+        }
+    },
+    {
+        "areaName": "Turku-AMK",
+        "restaurants": {
+            "sodexo": {"Turku-AMK": "160"}
+        }
+    }
+]
+
 
 CITIES = [("Tampere", tampere),
           ("Helsinki", helsinki),
