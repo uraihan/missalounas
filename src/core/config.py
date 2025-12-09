@@ -54,7 +54,8 @@ tampere = [
     {
         "areaName": "TAYS",
         "restaurants": {
-            "juvenes": {"Arvo": "5"},
+            "juvenes": {"Arvo": "5",
+                        "Arvo Cafe Lea": "5"},
         }
     }
 ]
