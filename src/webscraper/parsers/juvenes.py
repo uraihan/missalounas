@@ -38,7 +38,7 @@ def get_restaurant_data(restaurant_name, response_json):
               (.days[].mealoptions[] | .orderNumber),
               (.days[].mealoptions[].menuItems[] | .orderNumber,
                .portionSize, .images))
-        | map(.menus = [.menus[] | . + .days[0] | del(.days)])
+        | map(.menus = [.menus[] | . + .days[] | del(.days)])
         | map(.restaurantUniqueId = .menuTypeId | del(.menuTypeId))
         | .[]
     ''').input_value(essential_chunk).all()

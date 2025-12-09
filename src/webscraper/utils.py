@@ -39,10 +39,6 @@ def combine_restaurants(weekly_menu):
                       "menu_options": options}
                      for name, options in combined_menu.items()]
 
-    if len(combined_menu) != 1:
-        breakpoint()
-    # [combined_menu] = combined_menu
-
     return combined_menu
 
 
