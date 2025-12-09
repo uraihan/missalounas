@@ -50,6 +50,8 @@ def parse_restaurants(chain, area_name, rest_list):
     # compiled_dict[chain] = chain_list
     # return compiled_dict
 
+    # combine english and finnish menus
+    weekly_menu = utils.combine_restaurants(weekly_menu)
     return weekly_menu
 
 
