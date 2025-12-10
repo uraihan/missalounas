@@ -49,10 +49,28 @@ def parse_response(restaurant_name, area_name, lang, response_json):
         parsed_json: A parsed JSON object hat follows the JsonTransform
         specification.
     """
-    simplified_resp = jq.compile('''
-        del(. | .PriceHeader,
-            (.MenusForDays[].SetMenus[].SortOrder))
-    ''').input_value(response_json).all()
+    try:
+        simplified_resp = jq.compile('''
+            del(. | .PriceHeader,
+                (.MenusForDays[].SetMenus[].SortOrder))
+        ''').input_value(response_json).all()
+    except ValueError as e:
+        logger.warning(f"""{e}.
+            Restaurant {restaurant_name} either has no JSON for language
+            {lang} or got an unexpected JSON response
+        """)
+        logger.warning(f"Passing default formatted response for restaurant {
+                       restaurant_name}")
+        menu_item = unified_json.IndividualMenu(food_name=None,
+                                                diets=None,
+                                                date=None,
+                                                menu_type=None,
+                                                menu_type_id=None,
+                                                lang=lang)
+        restaurant_dict = unified_json.UnifiedJson(
+            restaurant_name, area_name, [menu_item])
+        return [asdict(restaurant_dict)]
+
     simplified_resp = simplified_resp[0]
     simplified_resp['lang'] = lang
 
