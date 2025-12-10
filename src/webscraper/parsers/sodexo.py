@@ -31,10 +31,10 @@ def get_restaurant_data(response_json):
     return restaurant_data
 
 
-def parse_response(id, area_name, lang, response_json):
+def parse_response(restaurant_name, area_name, lang, response_json):
     """Parse JSON response from Sodexo.
     Params:
-        id: Restaurant id to be queried into API.
+        restaurant_name: Restaurant name to be queried from API.
         area_name: Area that the restaurant belongs to.
         response_json: A JSON response from Sodexo.
 
