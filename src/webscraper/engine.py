@@ -6,7 +6,7 @@ import logging
 from parsers import juvenes, compass_group, sodexo
 
 from webscraper import utils, db_interface
-from core.config import CITIES, URLS, SUPPORTED_LANGS
+from webscraper.config import CITIES, URLS, SUPPORTED_LANGS
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='./log/webscraper_engine_run.log', encoding='utf-8',
