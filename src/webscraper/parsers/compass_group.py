@@ -41,7 +41,7 @@ def transform_response(restaurant_name, area_name, parsed_response):
 def parse_response(restaurant_name, area_name, lang, response_json):
     """Parse JSON response from Compass Group.
     Params:
-        id: Restaurant id to be queried into API.
+        restaurant_name: Name of the restaurant to be queried from API.
         area_name: Area that the restaurant belongs to.
         response_json: A JSON response from Compass Group.
 
