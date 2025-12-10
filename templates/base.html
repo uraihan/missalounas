@@ -19,7 +19,7 @@
                 {% for area in areas %}
                 <li>
                     {% if selected_area == area.get('area') %}
-                    <a class="bg-secondary" href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
+                    <a class="bg-neutral" href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
                         {{ area.get('area') }}
                     </a>
                     {% else %}

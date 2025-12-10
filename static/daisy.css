@@ -2,7 +2,7 @@
 @import 'tailwindcss';
 @plugin "daisyui";
 @plugin "daisyui" {
-    themes: cupcake --default, dark --prefersdark;
+    themes: cupcake --default, forest --prefersdark;
 }
 
 
@@ -72,9 +72,12 @@
 }
 
 @layer components {
+    .dropdown-button {
+        display: flex;
+        align-items: center;
+    }
     .dropdown-button::after {
         content: '';
-        display: inline-block;
         width: 20px;
         height: 20px;
         margin-left: 0.25rem;
@@ -85,7 +88,4 @@
     .dropdown:focus-within .dropdown-button::after {
         transform: rotate(180deg);
     }
-    /* .chevron { */
-    /*     transition: transform 0.5s ease; */
-    /* } */
 }
