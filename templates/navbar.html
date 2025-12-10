@@ -1,67 +1,84 @@
-{% macro navbar(cities, selected_city, selected_day, lang, date) %}
-    <nav class="navbar justify-between">
-        <div>
-            <a class="text-2xl" href="#"><strong>Missä Lounas??</strong></a>
-            <ul class="menu menu-horizontal items-center">
-                <li>
-                    <p>{{date}}</p>
-                </li>
+{% macro navbar_desktop(cities, selected_city, selected_day, lang, date) %}
+<nav class="navbar justify-center lg:justify-between">
+    <div class="flex flex-col sm:flex-row">
+        <!-- mobile part -->
+        <div class="flex items-center">
+            <div class="menu menu-vertical">
+                <a class="text-xl sm:text-lg md:text-2xl" href="#"><strong>Missä Lounas??</strong></a>
+                <a>{{date}}</a>
+            </div>
+            <div class="dropdown lg:hidden">
+                <div tabindex="0" class="btn">
+                    {{ selected_day.capitalize() }}
+                </div>
+                <ul tabindex="-1" class="dropdown-content
+                    bg-base-200 z-1">
                 {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
-                <li>
-                    {% if selected_day == day %}
-                    <a class="bg-primary" href="{{ url_for('index', **build_url(day=day))}}">
-                        {{ day.capitalize() }}
-                    </a>
-                    {% else %}
-                    <a href="{{ url_for('index', **build_url(day=day))}}">
-                        {{ day.capitalize() }}
-                    </a>
-                    {% endif %}
-                </li>
+                <li class="py-1 px-2"><a>{{ day.capitalize() }}</a></li>
                 {% endfor %}
-            </ul>
+                </ul>
+            </div>
         </div>
-        <div>
-            <ul class="menu menu-horizontal">
-                <li>
-                    <div class="dropdown dropdown-center">
-                        <div tabindex="0"
-                             class="flex text-lg items-center justify-center dropdown-button">{{ selected_city }}</div>
-                        <ul tabindex="-1"
-                            class="menu dropdown-content bg-base-200 shadow-2xl border-base-300 z-1">
-                            {% for c in cities %}
-                                <li>
-                                    <a class="hover:bg-primary"
-                                        href="{{ url_for('index',
-                                        **build_url(city=c['name'])) }}">{{ c['name'] }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </li>
-                <li>
-                    <details>
-                        <summary class="text-lg">
-                            {% if lang == 'fi' %} FI {% else %} EN {%
-                            endif %}
-                        </summary>
-                        <ul class="z-[1]">
-                            {% for code in ['EN','FI'] %}
+
+        <!-- desktop day buttons -->
+        <ul class="menu menu-horizontal items-center hidden lg:flex">
+            {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
+            <li>
+                {% if selected_day == day %}
+                <a class="bg-primary text-base lg:text-lg" href="{{ url_for('index', **build_url(day=day))}}">
+                    {{ day.capitalize() }}
+                </a>
+                {% else %}
+                <a class="text-base xl:text-lg" href="{{ url_for('index', **build_url(day=day))}}">
+                    {{ day.capitalize() }}
+                </a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="flex">
+        <ul class="menu menu-vertical md:menu-horizontal">
+            <li>
+                <div class="dropdown dropdown-center">
+                    <div tabindex="0"
+                         class="flex text-base md:text-lg items-center justify-center dropdown-button">{{ selected_city }}</div>
+                    <ul tabindex="-1"
+                        class="menu dropdown-content bg-base-200 shadow-2xl border-base-300 z-1">
+                        {% for c in cities %}
                             <li>
-                                <a href="{{ url_for('index',
-                                    **build_url(lang=code.lower())) }}"
-                                   class="{% if selected_lang == code
-                                   %}bg-primary text-primary-content{%
-                               endif %} hover:bg-primary
-                               hover:text-primary-content">
-                                    {{code}}
-                                </a>
+                                <a class="text-base md:text-lg hover:bg-primary"
+                                    href="{{ url_for('index',
+                                    **build_url(city=c['name'])) }}">{{ c['name'] }}</a>
                             </li>
-                            {% endfor %}
-                        </ul>
-                    </details>
-                </li>
-            </ul>
-        </div>
-    </nav>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown dropdown-center">
+                    <div tabindex="0"
+                         class="flex text-base md:text-lg items-center
+                         justify-end dropdown-button">
+                        {% if lang == 'fi' %} FI {% else %} EN {%
+                        endif %}
+                    </div>
+                    <ul tabindex="-1"
+                        class="menu dropdown-content bg-base-200 shadow-2xl border-base-300 z-1">
+                        {% for code in ['EN','FI'] %}
+                        <li>
+                            <a href="{{ url_for('index',**build_url(lang=code.lower())) }}"
+                               class="text-base md:text-lg{% if selected_lang == code
+                               %} bg-primary text-primary-content {% endif %} hover:bg-primary hover:text-primary-content">
+                                {{code}}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
 {% endmacro %}
