@@ -10,7 +10,7 @@
             <ul class="menu menu-horizontal lg:hidden">
                 <li>
                     <details>
-                        <summary>{{ selected_day.capitalize() }}</summary>
+                        <summary class="text-lg bg-primary">{{ selected_day.capitalize() }}</summary>
                         <ul class="z-1 bg-base-200">
                             {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
                             <li><a>{{ day.capitalize() }}</a></li>
@@ -40,11 +40,13 @@
     </div>
 
     <div class="flex">
-        <ul class="menu menu-vertical md:menu-horizontal">
+        <ul class="menu menu-vertical gap-2 md:menu-horizontal">
             <li>
-                <details>
-                    <summary class="text-base md:text-lg">{{ selected_city }}</summary>
-                    <ul class="z-1 bg-base-200">
+                <div class="dropdown dropdown-end bg-base-300 sm:dropdown-center">
+                    <div tabindex="0" role="button" class="text-base dropdown-button md:text-lg">
+                        {{ selected_city }}
+                    </div>
+                    <ul tabindex="-1" class="justify-between dropdown-content z-1 bg-base-200">
                         {% for c in cities %}
                             <li>
                                 <a class="text-base md:text-lg hover:bg-primary"
@@ -53,15 +55,15 @@
                             </li>
                         {% endfor %}
                     </ul>
-                </details>
+                </div>
             </li>
             <li>
-                <details>
-                    <summary class="text-base md:text-lg text-right">
+                <div class="dropdown dropdown-end bg-base-300 sm:dropdown-center">
+                    <div tabindex="0" role="button" class="justify-between dropdown-button text-base md:text-lg text-right">
                         {% if lang == 'fi' %} FI {% else %} EN
                         {% endif %}
-                    </summary>
-                    <ul class="z-1 bg-base-200">
+                    </div>
+                    <ul tabindex="-1" class="dropdown-content z-1 bg-base-200">
                         {% for code in ['EN','FI'] %}
                         <li>
                             <a href="{{ url_for('index',**build_url(lang=code.lower())) }}"
@@ -72,7 +74,7 @@
                         </li>
                         {% endfor %}
                     </ul>
-                </details>
+                </div>
             </li>
         </ul>
     </div>
