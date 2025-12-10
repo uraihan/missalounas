@@ -6,10 +6,11 @@
         <div class="p-4">
             {% if rest['menus'] %}
                 {% for menu_id, menus in rest['menus'].items() %}
+                <!-- TODO: add menu_type somewhere here -->
                 <div class="grid grid-auto-rows border-y-[0.5px]">
 
                     {% for food in menus %}
-                    <div class="flex justify-between items-center"
+                    <div class="flex justify-between items-center">
                         <p class='flex-1'>{{ food['name'] }}</p>
                         {% if food['diets'] != "()" %}
                             <p class='text-right max-w-[50%] text-sm'>{{

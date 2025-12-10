@@ -7,17 +7,18 @@
                 <a class="text-xl sm:text-lg md:text-2xl" href="#"><strong>Missä Lounas??</strong></a>
                 <a>{{date}}</a>
             </div>
-            <div class="dropdown lg:hidden">
-                <div tabindex="0" class="btn">
-                    {{ selected_day.capitalize() }}
-                </div>
-                <ul tabindex="-1" class="dropdown-content
-                    bg-base-200 z-1">
-                {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
-                <li class="py-1 px-2"><a>{{ day.capitalize() }}</a></li>
-                {% endfor %}
-                </ul>
-            </div>
+            <ul class="menu menu-horizontal lg:hidden">
+                <li>
+                    <details>
+                        <summary>{{ selected_day.capitalize() }}</summary>
+                        <ul class="z-1 bg-base-200">
+                            {% for day in ['monday', "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] %}
+                            <li><a>{{ day.capitalize() }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </details>
+                </li>
+            </ul>
         </div>
 
         <!-- desktop day buttons -->
@@ -41,11 +42,9 @@
     <div class="flex">
         <ul class="menu menu-vertical md:menu-horizontal">
             <li>
-                <div class="dropdown dropdown-center">
-                    <div tabindex="0"
-                         class="flex text-base md:text-lg items-center justify-center dropdown-button">{{ selected_city }}</div>
-                    <ul tabindex="-1"
-                        class="menu dropdown-content bg-base-200 shadow-2xl border-base-300 z-1">
+                <details>
+                    <summary class="text-base md:text-lg">{{ selected_city }}</summary>
+                    <ul class="z-1 bg-base-200">
                         {% for c in cities %}
                             <li>
                                 <a class="text-base md:text-lg hover:bg-primary"
@@ -54,18 +53,15 @@
                             </li>
                         {% endfor %}
                     </ul>
-                </div>
+                </details>
             </li>
             <li>
-                <div class="dropdown dropdown-center">
-                    <div tabindex="0"
-                         class="flex text-base md:text-lg items-center
-                         justify-end dropdown-button">
-                        {% if lang == 'fi' %} FI {% else %} EN {%
-                        endif %}
-                    </div>
-                    <ul tabindex="-1"
-                        class="menu dropdown-content bg-base-200 shadow-2xl border-base-300 z-1">
+                <details>
+                    <summary class="text-base md:text-lg text-right">
+                        {% if lang == 'fi' %} FI {% else %} EN
+                        {% endif %}
+                    </summary>
+                    <ul class="z-1 bg-base-200">
                         {% for code in ['EN','FI'] %}
                         <li>
                             <a href="{{ url_for('index',**build_url(lang=code.lower())) }}"
@@ -76,7 +72,7 @@
                         </li>
                         {% endfor %}
                     </ul>
-                </div>
+                </details>
             </li>
         </ul>
     </div>
