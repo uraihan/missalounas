@@ -31,8 +31,6 @@ def combine_restaurants(weekly_menu):
         # }
         # combined_menu.update(combined)
         combined_menu[restaurant_name].extend(options)
-    if len(area_set) != 1:
-        breakpoint()
     assert len(area_set) == 1, "Warning: There are more than 1 area detected"
     combined_menu = [{'restaurant_name': name,
                       "area": list(area_set)[0],
