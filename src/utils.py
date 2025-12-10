@@ -15,7 +15,18 @@ def get_cities():
     return cities
 
 
-def get_todays_menu(city, selected_lang, selected_date):
+def get_all_areas(selected_city):
+    conn = psycopg.connect(db_string, row_factory=dict_row)
+    with conn:
+        areas = conn.execute('''select distinct area from restaurants r
+                             left join cities c on r.city_id = c.id
+                             where c.name = %s
+            ''', (selected_city,)).fetchall()
+
+    return areas
+
+
+def get_todays_menu(city, selected_area, selected_lang, selected_date):
     # current_date = datetime.now().strftime(utils.DATE_FORMAT)
     conn = psycopg.connect(db_string, row_factory=dict_row)
     # all_cities = get_cities()
@@ -35,12 +46,13 @@ def get_todays_menu(city, selected_lang, selected_date):
             LEFT JOIN foods f ON r.id = f.restaurant_id
                 AND f.date = %s
                 AND f.lang = %s
-            WHERE r.city_id = %s
+            WHERE r.city_id = %s and r.area = %s
             ORDER BY r.name, f.created_at
         '''
 
         results = conn.execute(
-            query, (selected_date, selected_lang, city_id)).fetchall()
+            query, (selected_date, selected_lang, city_id,
+                    selected_area)).fetchall()
 
     todays_menu = {}
     for row in results:

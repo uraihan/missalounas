@@ -1,28 +1,19 @@
-import psycopg
 import os
 import utils
 
-from psycopg.rows import dict_row
 from flask import Flask, render_template, request
 from flask_apscheduler import APScheduler
 
 from datetime import datetime
 
 from core.config import (DEFAULT_CITY,
-                         DEFAULT_DAY,
-                         db_string)
+                         DEFAULT_DAY)
 
 app = Flask(__name__)
 scheduler = APScheduler()
 
 scheduler.init_app(app)
 scheduler.start()
-
-
-# def db_connection():
-#     conn = sqlite3.connect('mock_db.db')
-#     conn.row_factory = sqlite3.Row
-#     return conn
 
 
 @scheduler.task('cron',
@@ -88,27 +79,34 @@ def index(day=None, city=None, lang=None):
     if lang is None:
         lang = request.accept_languages.best_match(['fi', 'en']) or 'en'
 
+    # Date handler
     selected_day = request.args.get('day',
                                     datetime.now().strftime("%A").lower())
-    selected_city = request.args.get('city', DEFAULT_CITY)
-
-    # Date handling
     selected_date = utils.get_current_week_date(selected_day)
 
-    # selected_date = '28.11.2025'
-    # Handling city
+    # City handler
+    selected_city = request.args.get('city', DEFAULT_CITY)
     cities = utils.get_cities()
 
-    # Retrieve menu based on requested filter
-    menus = utils.get_todays_menu(selected_city, lang, selected_date)
+    # Get all area based on selected city
+    selected_area = request.args.get('area', None)
+    all_areas = utils.get_all_areas(selected_city)
+    if selected_area is None:
+        selected_area = all_areas[0].get('area')
+
+    # Retrieve menu based on the requested filter
+    menus = utils.get_todays_menu(
+        selected_city, selected_area, lang, selected_date)
 
     return render_template("index.html",
                            cities=cities,
+                           areas=all_areas,
                            menus=menus,
                            selected_city=selected_city,
-                           lang=lang,
+                           selected_area=selected_area,
                            day=selected_day,
-                           date=selected_date
+                           date=selected_date,
+                           lang=lang
                            )
 
 

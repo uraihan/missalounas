@@ -9,10 +9,27 @@
     </head>
     <body>
         <header>
+            <div>
             {% import 'navbar.html' as navbar %}
-            {{ navbar.navbar(cities, selected_city, day, lang, date)}}
+            {{ navbar.navbar_desktop(cities, selected_city, day, lang, date)}}
+            </div>
         </header>
-        <main>
+        <main class="mt-16 sm:mt-0">
+            <ul class="menu menu-horizontal items-center">
+                {% for area in areas %}
+                <li>
+                    {% if selected_area == area.get('area') %}
+                    <a class="bg-secondary" href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
+                        {{ area.get('area') }}
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
+                        {{ area.get('area') }}
+                    </a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
             <section class='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-items-stretch gap-4'>
                 {% block cards %}{% endblock %}
             </section>
