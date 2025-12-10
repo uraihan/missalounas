@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Delius&family=Playpen+Sans:wght@100..800&display=swap');
 @import 'tailwindcss';
 @plugin "daisyui";
 @plugin "daisyui" {
@@ -23,14 +24,15 @@
     --spacing-1080: 1080px;
 
     /* Default font */
-    --font-primary: "Noto Sans JP", "serif";
-    --font-secondary: "Fira Sans", "serif";
+    --font-primary: "Playpen Sans", cursive;
+    --font-secondary: "Montserrat", sans-serif;
 
     /* Typography (unused now) */
     --h1: 600 3rem/1.2em --var(--font-secondary);
     --h2: 600 2rem/1.2em --var(--font-secondary);
     --p: 1rem/1.5rem --var(--font-primary);
 }
+
 
 @layer base {
     /* h1 { */
