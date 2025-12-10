@@ -44,6 +44,9 @@ def parse_restaurants(chain, area_name, rest_list):
             if chain == 'sodexo':
                 resp = sodexo.parse_response(
                     restaurant, area_name, lang, response_json)
+            if chain == 'campusravita':
+                resp = juvenes.parse_response(
+                    restaurant, area_name, lang, response_json)
 
             weekly_menu.extend(resp)
 

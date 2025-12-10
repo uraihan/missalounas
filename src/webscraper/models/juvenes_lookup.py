@@ -26,6 +26,9 @@ RESTAURANT_UNIQUE_IDS = {
     "Rata": [56],
     "Frenckell": [56],
 
+    # TAMK
+    "Campusravita": [1],
+
     # Turku TYS
     "Block": [56],
     "Block Fusion": [22]
