@@ -1,10 +1,13 @@
 import jq
+import logging
 
 from datetime import datetime, timedelta
 from dataclasses import asdict
 
 from webscraper import utils
 from webscraper.models import unified_json
+
+logger = logging.getLogger(__name__)
 
 
 def get_restaurant_data(response_json):

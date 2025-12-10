@@ -1,5 +1,6 @@
 import jq
 import jsonschema
+import logging
 
 from dataclasses import asdict
 from types import SimpleNamespace
@@ -7,6 +8,8 @@ from types import SimpleNamespace
 from webscraper import utils
 from webscraper.models import juvenes_response, unified_json
 from webscraper.models.juvenes_lookup import RESTAURANT_UNIQUE_IDS
+
+logger = logging.getLogger(__name__)
 
 
 def get_essential_chunk(response, sub_rest_id):
@@ -79,7 +82,7 @@ def parse_response(restaurant_name, area_name, lang, response_json):
         # breakpoint()
 
     except jsonschema.exceptions.ValidationError as e:
-        print(f"JSON data does not match intended schema. {e.message}")
+        logger.error(f"JSON data does not match intended schema. {e.message}")
 
     restaurant_data = get_restaurant_data(restaurant_name, response_json)
     parsed_json = []
@@ -119,6 +122,4 @@ def parse_response(restaurant_name, area_name, lang, response_json):
     if parsed_json:
         parsed_json = utils.combine_restaurants(parsed_json)
 
-    print(f"Restaurant: {restaurant_name}\nLength of combined json: {
-          len(parsed_json)}")
     return parsed_json

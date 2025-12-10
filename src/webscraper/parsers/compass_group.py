@@ -1,10 +1,13 @@
 import jq
 import re
-from pprint import pformat
+import logging
+
 from dataclasses import asdict
 
 from webscraper.models import unified_json
 from webscraper import utils
+
+logger = logging.getLogger(__name__)
 
 
 def transform_response(restaurant_name, area_name, parsed_response):

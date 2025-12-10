@@ -1,11 +1,16 @@
 import requests
 import json
 import itertools
+import logging
 
 from parsers import juvenes, compass_group, sodexo
 
 from webscraper import utils, db_interface
 from core.config import CITIES, URLS, SUPPORTED_LANGS
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='./log/webscraper_engine_run.log', encoding='utf-8',
+                    level=logging.DEBUG)
 
 
 def get_restaurant_url(chain, id, lang):
@@ -18,7 +23,7 @@ def get_restaurant_url(chain, id, lang):
 
 
 def parse_restaurants(chain, area_name, rest_list):
-    print(f"Parsing {chain} in {area_name}...")
+    logger.info(f"Parsing {chain} in {area_name}...")
     weekly_menu = []
     for restaurant, id in rest_list.items():
         for lang in SUPPORTED_LANGS:
@@ -29,10 +34,12 @@ def parse_restaurants(chain, area_name, rest_list):
                 response.raise_for_status()
                 response_json = json.loads(response.text)
             except requests.RequestException as e:
-                print(f"Error fetching from URL: {e}")
+                logger.error(f"Error fetching from URL: {e}")
+                print("An error was encountered. Check the logfile.")
                 raise
             except ValueError as e:
-                print(f"Error: {e}")
+                logger.error(f"Error: {e}")
+                print("An error was encountered. Check the logfile.")
                 raise
 
             if chain == 'juvenes':
@@ -64,7 +71,8 @@ if __name__ == "__main__":
     collect_data = []
     for city_name, city_data in CITIES:
         print("===========================")
-        print(f"Processing {city_name}...\n--------------------")
+        print(f"Processing Restaurants in {
+            city_name}...\n--------------------")
         city_data = utils.unpickled_city_dict(city_data)
 
         restaurants_in_city = [
@@ -93,13 +101,15 @@ if __name__ == "__main__":
                                                    'menu_options'])), (
                 f"Keys not matching! item.keys() = {rest.keys()}")
 
-            print(f"{rest["restaurant_name"]} passed the test")
+            logger.info(f"{rest["restaurant_name"]} passed the test")
 
     # INSERT TO SQL
     # Create db table
+    print("Creating tables...")
     db_interface.create_tables()
     for item in collect_data:
         city = item['city']
+        print(f"Insert restaurant menus in {city}")
         restaurant_data = item['restaurants']
         city_id = db_interface.insert_city(city)
         db_interface.insert_restaurants(city_id, restaurant_data)
