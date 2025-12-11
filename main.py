@@ -66,9 +66,9 @@ def inject_context():
     lang = request.args.get('lang')
 
     return {
-        'current_day': day,
-        'current_city': city,
-        'current_lang': lang
+        'selected_day': day,
+        'selected_city': city,
+        'lang': lang
     }
 
 
