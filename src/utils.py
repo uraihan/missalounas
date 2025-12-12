@@ -16,6 +16,9 @@ def get_cities():
 
 
 def get_all_areas(selected_city):
+    """
+        Returns: List(dict[all_areas])
+    """
     conn = psycopg.connect(db_string, row_factory=dict_row)
     with conn:
         areas = conn.execute('''select distinct area from restaurants r

@@ -11,7 +11,7 @@
         <header>
             <div>
             {% import 'navbar.html' as navbar %}
-            {{ navbar.navbar_desktop(cities, selected_city, day, lang, date)}}
+            {{ navbar.navbar_desktop(cities, selected_city, selected_day, lang, date)}}
             </div>
         </header>
         <main class="mt-16 sm:mt-0">
@@ -34,12 +34,5 @@
                 {% block cards %}{% endblock %}
             </section>
         </main>
-        <footer class="footer static bottom-0 min-h-24 mt-12">
-            <aside class="grid-flow-col">
-                <p>
-                    Found any mistakes? Let us know <a href="#"><u>here!</u></a>
-                </p>
-            </aside>
-        </footer>
     </body>
 </html>

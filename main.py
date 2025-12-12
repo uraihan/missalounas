@@ -1,19 +1,24 @@
 import os
 import utils
+import logging
 
 from flask import Flask, render_template, request
 from flask_apscheduler import APScheduler
-
 from datetime import datetime
 
-from core.config import (DEFAULT_CITY,
-                         DEFAULT_DAY)
+from core.config import DEFAULT_CITY, DEFAULT_DAY
 
 app = Flask(__name__)
 scheduler = APScheduler()
 
+# init scheduler
 scheduler.init_app(app)
 scheduler.start()
+
+# init logger
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    filename="./log/run_scheduled_webscraper.log", encoding='utf-8')
 
 
 @scheduler.task('cron',
@@ -22,38 +27,42 @@ scheduler.start()
                 hour='00',
                 minute='05')
 def run_webscraper():
+    logger.info(f"Starting scheduled job: Webscraping engine at {
+                datetime.now()}")
     os.system('uv run src/webscraper/engine.py')
 
 
-def build_url(**new_params):
+def build_url(**queried_items):
     """
-    Build a URL preserving current parameters and applying new ones.
-    Only includes parameters that differ from defaults.
+    Helper function to build a URL preserving current parameters and
+    applying new ones. Only includes parameters that differ from defaults.
     """
-    # Get current parameters
-    current_params = {
-        'day': request.args.get('day', DEFAULT_DAY),
-        'city': request.args.get('city', DEFAULT_CITY),
-        'lang': request.args.get('lang',
-                                 request.accept_languages.best_match(['fi', 'en']) or 'en')
-    }
-
-    # Update with new parameters
-    current_params.update(new_params)
-
-    # Filter out default values
-    filtered_params = {}
+    # Default parameters
     defaults = {
         'day': DEFAULT_DAY,
         'city': DEFAULT_CITY,
         'lang': request.accept_languages.best_match(['fi', 'en']) or 'en'
     }
 
-    for key, value in current_params.items():
-        if value != defaults.get(key):
-            filtered_params[key] = value
+    # Get current parameters
+    params = {
+        'day': request.args.get('day', DEFAULT_DAY),
+        'city': request.args.get('city', DEFAULT_CITY),
+        'area': request.args.get('area'),
+        'lang': request.args.get('lang',
+                                 request.accept_languages.best_match(['fi', 'en']) or 'en')
+    }
 
-    return filtered_params
+    if (queried_items.get("city") and
+            queried_items.get("city") != params.get("city")):
+        params["area"] = None
+
+    params.update(queried_items)
+
+    returned_params = {k: v for k, v in params.items()
+                       if v != defaults.get(k)}
+
+    return returned_params
 
 
 app.jinja_env.globals.update(build_url=build_url)
@@ -61,6 +70,8 @@ app.jinja_env.globals.update(build_url=build_url)
 
 @app.context_processor
 def inject_context():
+    """Providing all jinja templates with global variables.
+    """
     day = request.args.get('day')
     city = request.args.get('city')
     lang = request.args.get('lang')
@@ -73,7 +84,7 @@ def inject_context():
 
 
 @app.get("/", endpoint="index")
-def index(day=None, city=None, lang=None):
+def index():
     # Get default arguments
     lang = request.args.get('lang')
     if lang is None:
@@ -81,7 +92,7 @@ def index(day=None, city=None, lang=None):
 
     # Date handler
     selected_day = request.args.get('day',
-                                    datetime.now().strftime("%A").lower())
+                                    DEFAULT_DAY)
     selected_date = utils.get_current_week_date(selected_day)
 
     # City handler
@@ -91,7 +102,7 @@ def index(day=None, city=None, lang=None):
     # Get all area based on selected city
     selected_area = request.args.get('area', None)
     all_areas = utils.get_all_areas(selected_city)
-    if selected_area is None:
+    if selected_area is None and selected_area not in all_areas:
         selected_area = all_areas[0].get('area')
 
     # Retrieve menu based on the requested filter
@@ -104,12 +115,12 @@ def index(day=None, city=None, lang=None):
                            menus=menus,
                            selected_city=selected_city,
                            selected_area=selected_area,
-                           day=selected_day,
+                           selected_day=selected_day,
                            date=selected_date,
                            lang=lang
                            )
 
 
-# if __name__ == "__main__":
-#
-#     app.run()
+if __name__ == "__main__":
+
+    app.run()

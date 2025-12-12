@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from types import SimpleNamespace
 
 load_dotenv()
 if os.getenv("DB_URL"):
@@ -21,4 +20,4 @@ db_string = db_string
 
 DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
-DEFAULT_DAY = datetime.now().strftime(DATE_FORMAT)
+DEFAULT_DAY = datetime.now().strftime("%A").lower()
