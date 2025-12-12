@@ -30,6 +30,7 @@ COPY . /app
 
 RUN uv sync --locked --no-dev --no-install-project
 RUN uv sync --locked --no-dev --no-editable
+RUN mkdir -p log/
 
 COPY . .
 
@@ -37,7 +38,6 @@ COPY --from=tailwind-builder /app/static/main.css ./static/main.css
 
 RUN echo '#!/bin/bash\n\
 set -e\n\
-exec mkdir -p log\n\
 source /app/.venv/bin/activate\n\
 echo "Checking database..."\n\
 uv run src/core/db_check.py\n\
