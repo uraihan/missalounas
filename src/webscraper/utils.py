@@ -1,7 +1,9 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
+from dataclasses import asdict
 
 from core.config import DATE_FORMAT
+from webscraper.models import unified_json
 
 
 def unpickled_city_dict(city_data):
@@ -18,26 +20,18 @@ def combine_restaurants(weekly_menu):
         combined_menu: List of restaurant-food entries with duplicate
         restaurants combined together
     """
-    combined_menu = defaultdict(list)
-    area_set = set()
-    for menu in weekly_menu:
-        restaurant_name = menu['restaurant_name']
-        area_set.add(menu['area'])
-        options = menu['menu_options']
-        # combined = {
-        #     'restaurant_name': restaurant_name,
-        #     'area': area,
-        #     'menu_options': options
-        # }
-        # combined_menu.update(combined)
-        combined_menu[restaurant_name].extend(options)
-    assert len(area_set) == 1, "Warning: There are more than 1 area detected"
-    combined_menu = [{'restaurant_name': name,
-                      "area": list(area_set)[0],
-                      "menu_options": options}
-                     for name, options in combined_menu.items()]
+    area_set = {menu.get('area') for menu in weekly_menu}
 
-    return combined_menu
+    combined_menu = defaultdict(list)
+    for menu in weekly_menu:
+        restaurant_name = menu.get('restaurant_name')
+        options = menu.get('menu_options')
+        combined_menu[restaurant_name].extend(options)
+
+    return [{'restaurant_name': name,
+             "area": list(area_set)[0],
+             "menu_options": option}
+            for name, option in combined_menu.items()]
 
 
 def format_date(original_date, response_format):
@@ -50,3 +44,22 @@ def format_date(original_date, response_format):
         raise f"Error converting date: {e}"
 
     return datetime_fmt
+
+
+def create_empty_item(restaurant_name, area_name, lang):
+    """Create an empty Restaurant item if parser cannot find the menu.
+    Returns:
+        restaurant (dict(Unified_Json))
+    """
+
+    no_food = unified_json.IndividualMenu(food_name=None,
+                                          diets=None,
+                                          menu_type=None,
+                                          date=None,
+                                          menu_uid=None,
+                                          lang=lang)
+
+    return asdict(unified_json.RestaurantContainer(restaurant_name=restaurant_name,
+                                                   area=area_name,
+                                                   menu_options=[no_food]
+                                                   ))

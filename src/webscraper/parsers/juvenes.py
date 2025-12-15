@@ -4,6 +4,7 @@ import logging
 
 from dataclasses import asdict
 from types import SimpleNamespace
+from itertools import chain
 
 from webscraper import utils
 from webscraper.models import juvenes_response, unified_json
@@ -38,7 +39,7 @@ def get_restaurant_data(restaurant_name, response_json):
     simplified_resp = jq.compile('''
         del(.[].menus[] | .menuId, .menuAdditionalName, .menuName,
               (.days[] | .weekday, .lang),
-              (.days[].mealoptions[] | .orderNumber),
+              (.days[].mealoptions[] | .id),
               (.days[].mealoptions[].menuItems[] | .orderNumber,
                .portionSize, .images))
         | map(.menus = [.menus[] | . + .days[] | del(.days)])
@@ -56,6 +57,20 @@ def get_restaurant_data(restaurant_name, response_json):
 
     return restaurant_data
     # maybe we can use generator function here?
+
+
+def get_unified_menu(menu_option, menu_item, day, lang):
+    """Form a unified menu container.
+    """
+    food_list = unified_json.IndividualMenu(
+        food_name=menu_item.get('name'),
+        diets=menu_item.get('diets'),
+        menu_type=menu_option.get('name'),
+        date=day.get('date'),
+        menu_uid=menu_option.get('orderNumber'),
+        lang=lang)
+
+    return food_list
 
 
 def parse_response(restaurant_name, area_name, lang, response_json):
@@ -89,34 +104,17 @@ def parse_response(restaurant_name, area_name, lang, response_json):
     if not restaurant_data:
         # NOTE: If JSON response is an empty array, individually
         # assign UnifiedJson object (?)
-        no_menu = unified_json.IndividualMenu(food_name=None,
-                                              diets=None,
-                                              date=None,
-                                              menu_type=None,
-                                              menu_type_id=None,
-                                              lang=lang)
-        parsed_json.append(
-            asdict(unified_json.UnifiedJson(restaurant_name=restaurant_name,
-                                            area=area_name,
-                                            menu_options=[no_menu]
-                                            )))
+        parsed_json.append(utils.create_empty_item(restaurant_name,
+                                                   area_name, lang))
     else:
         for data in restaurant_data:
-            menu_type = data.get('menuTypeName')
-            food_list = [
-                unified_json.IndividualMenu(food_name=item.get('name'),
-                                            diets=item.get('diets'),
-                                            date=day.get('date'),
-                                            menu_type=menu_type,
-                                            menu_type_id=option.get('id'),
-                                            lang=lang)
-                for day in data.get('menus')
-                for option in day.get('mealoptions')
-                for item in option.get('menuItems')
-            ]
+            container = [get_unified_menu(option, item, day, lang)
+                         for day in data.get('menus')
+                         for option in day.get('mealoptions')
+                         for item in option.get('menuItems')]
 
-            restaurant_object = unified_json.UnifiedJson(
-                restaurant_name, area_name, food_list)
+            restaurant_object = unified_json.RestaurantContainer(
+                restaurant_name, area_name, container)
             parsed_json.append(asdict(restaurant_object))
 
     if parsed_json:

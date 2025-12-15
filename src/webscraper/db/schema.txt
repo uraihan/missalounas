@@ -9,7 +9,7 @@
 #   id int pk
 #   name varchar
 #   openingHours varchar
-#   cityid int
+#   cityid int > City.id
 # }
 #
 # Table Menu {
@@ -18,18 +18,15 @@
 #   day varchar
 #   menuType varchar -> lounas/vegan
 #   lang varchar
-#   restaurantid int
+#   restaurantid int > Restaurant.id
 # }
 #
 # Table Food {
 #   id int pk
 #   createAt datetime
-#   day varchar
-#   menuType varchar -> lounas/vegan
 #   name varchar
 #   diets varchar
-#   lang varchar
-#   menuid int
+#   menuid int > Menu.id
 # }
 # Ref: Restaurant.cityid > City.restaurantid
 #

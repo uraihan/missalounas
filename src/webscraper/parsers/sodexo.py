@@ -44,14 +44,7 @@ def parse_response(restaurant_name, area_name, lang, response_json):
     """
     restaurant_data = get_restaurant_data(response_json)
     if not restaurant_data:
-        food_item = unified_json.IndividualMenu(food_name=None,
-                                                diets=None,
-                                                date=None,
-                                                menu_type=None,
-                                                menu_type_id=None,
-                                                lang=lang)
-        parsed_json = unified_json.UnifiedJson(
-            restaurant_name, area_name, [food_item])
+        parsed_json = utils.create_empty_item(restaurant_name, area_name, lang)
 
     else:
         restaurant_name = restaurant_data['restaurant_name']
@@ -78,13 +71,13 @@ def parse_response(restaurant_name, area_name, lang, response_json):
 
                 food_item = unified_json.IndividualMenu(food_name,
                                                         diets,
-                                                        date,
-                                                        menu_type,
-                                                        menu_type_id,
-                                                        lang)
+                                                        menu_type=menu_type,
+                                                        date=date,
+                                                        menu_uid=menu_type_id,
+                                                        lang=lang)
                 menu_list.append(food_item)
 
-        parsed_json = unified_json.UnifiedJson(
-            restaurant_name, area_name, menu_list)
+        parsed_json = asdict(unified_json.RestaurantContainer(
+            restaurant_name, area_name, menu_list))
 
-    return [asdict(parsed_json)]
+    return [parsed_json]

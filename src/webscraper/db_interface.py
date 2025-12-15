@@ -12,9 +12,9 @@ def create_tables():
         cursor = conn.cursor()
 
         # Very dirty solution > need to come up with better one
-        cursor.execute("DROP TABLE IF EXISTS foods")
-        cursor.execute("DROP TABLE IF EXISTS restaurants")
-        cursor.execute("DROP TABLE IF EXISTS cities")
+        cursor.execute("DROP TABLE IF EXISTS cities CASCADE")
+        cursor.execute("DROP TABLE IF EXISTS foods CASCADE")
+        cursor.execute("DROP TABLE IF EXISTS restaurants CASCADE")
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cities (
@@ -28,8 +28,7 @@ def create_tables():
                 id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                 name VARCHAR(200) NOT NULL,
                 area VARCHAR(200) NOT NULL,
-                city_id INTEGER NOT NULL,
-                FOREIGN KEY (city_id) REFERENCES cities(id)
+                city_id INTEGER REFERENCES cities(id)
                 )
         """)
 
@@ -38,13 +37,12 @@ def create_tables():
                 id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
                 name VARCHAR(200),
                 diets VARCHAR(100),
+                menu_type VARCHAR(200),
+                menu_uid INTEGER,
                 date VARCHAR(20),
                 lang VARCHAR(10),
-                menu_type VARCHAR(100),
-                menu_type_id INTEGER,
                 created_at timestamp DEFAULT current_timestamp,
-                restaurant_id INTEGER NOT NULL,
-                FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+                restaurant_id INTEGER REFERENCES restaurants(id)
                 )
         """)
         conn.commit()
@@ -68,9 +66,9 @@ def insert_city(city):
 
 
 def insert_restaurants(city_id, weekly_menu):
-    conn_pg = psycopg.connect(db_string, row_factory=dict_row)
-    with conn_pg as conn:
-        for item in weekly_menu:
+    for item in weekly_menu:
+        conn_pg = psycopg.connect(db_string, row_factory=dict_row)
+        with conn_pg as conn:
             restaurant_name = item['restaurant_name']
             area_name = item['area']
 
@@ -84,24 +82,26 @@ def insert_restaurants(city_id, weekly_menu):
             restaurant_id = cursor.fetchone()['id']
             conn.commit()
 
-            for option in item['menu_options']:
-                food_name = option['food_name']
-                diets = option['diets']
-                date = option['date']
-                lang = option['lang']
-                menu_type = option['menu_type']
-                menu_type_id = option['menu_type_id']
+        for food in item['menu_options']:
+            conn_pg = psycopg.connect(db_string, row_factory=dict_row)
+            with conn_pg as conn:
+                food_name = food.get('food_name')
+                diets = food.get('diets')
+                menu_type = food.get('menu_type')
+                menu_uid = food.get('menu_uid')
+                date = food.get('date')
+                lang = food.get('lang')
 
                 cursor = conn.cursor()
                 cursor.execute("""
-                    INSERT INTO foods (name, diets, date, lang, menu_type, menu_type_id, restaurant_id)
+                    INSERT INTO foods (name, diets, menu_type, menu_uid, date, lang, restaurant_id)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, (food_name,
                       diets,
+                      menu_type,
+                      menu_uid,
                       date,
                       lang,
-                      menu_type,
-                      menu_type_id,
                       restaurant_id)
                 )
                 conn.commit()

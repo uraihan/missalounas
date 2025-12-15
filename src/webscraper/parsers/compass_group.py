@@ -28,12 +28,13 @@ def transform_response(restaurant_name, area_name, parsed_response):
                 menu_type_id = idx
                 menu_item = unified_json.IndividualMenu(food_name,
                                                         diets,
-                                                        date,
-                                                        menu_type,
-                                                        menu_type_id,
-                                                        lang)
+                                                        menu_type=menu_type,
+                                                        date=date,
+                                                        menu_uid=menu_type_id,
+                                                        lang=lang)
                 menu_options.append(menu_item)
-    restaurant_dict = unified_json.UnifiedJson(
+
+    restaurant_dict = unified_json.RestaurantContainer(
         restaurant_name, area_name, menu_options)
     return asdict(restaurant_dict)
 
@@ -61,15 +62,8 @@ def parse_response(restaurant_name, area_name, lang, response_json):
         """)
         logger.warning(f"Passing default formatted response for restaurant {
                        restaurant_name}")
-        menu_item = unified_json.IndividualMenu(food_name=None,
-                                                diets=None,
-                                                date=None,
-                                                menu_type=None,
-                                                menu_type_id=None,
-                                                lang=lang)
-        restaurant_dict = unified_json.UnifiedJson(
-            restaurant_name, area_name, [menu_item])
-        return [asdict(restaurant_dict)]
+
+        return [utils.create_empty_item(restaurant_name, area_name, lang)]
 
     simplified_resp = simplified_resp[0]
     simplified_resp['lang'] = lang

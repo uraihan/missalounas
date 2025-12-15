@@ -39,18 +39,18 @@ def get_todays_menu(city, selected_area, selected_lang, selected_date):
         city_id = city_id['id']
         query = '''
             SELECT
-                r.id as restaurant_id,
-                r.name as restaurant_name,
-                f.menu_type as menu_type,
-                f.menu_type_id as menu_id,
-                f.name as menu_name,
-                f.diets as menu_diets
+                f.menu_uid AS menu_uid,
+                r.name AS restaurant_name,
+                f.menu_type AS menu_type,
+                ARRAY_AGG(f.name ORDER BY f.created_at) AS menu_name,
+                ARRAY_AGG(f.diets) AS menu_diets
             FROM restaurants r
             LEFT JOIN foods f ON r.id = f.restaurant_id
                 AND f.date = %s
                 AND f.lang = %s
             WHERE r.city_id = %s and r.area = %s
-            ORDER BY r.name, f.created_at
+            GROUP BY r.name, f.menu_uid, f.menu_type
+            ORDER BY r.name
         '''
 
         results = conn.execute(
@@ -59,23 +59,25 @@ def get_todays_menu(city, selected_area, selected_lang, selected_date):
 
     todays_menu = {}
     for row in results:
-        restaurant_id = row['restaurant_id']
+        restaurant_name = row.get('restaurant_name')
+        menu_uid = row.get('menu_uid')
+        menu_type = row.get('menu_type')
+        foods = row.get('menu_name')
+        diets = row.get('menu_diets')
 
-        if restaurant_id not in todays_menu:
-            todays_menu[restaurant_id] = {
-                'name': row['restaurant_name'],
-                'menus': defaultdict(list)
-            }
-        if row['menu_name']:
-            menu_id = row['menu_id']
-            todays_menu[restaurant_id]['menus'][menu_id].append({
-                'name': row['menu_name'],
-                'diets': row['menu_diets']
-            })
+        if menu_uid is None:
+            todays_menu[restaurant_name] = None
+            continue
 
-    for restaurant_id in todays_menu:
-        todays_menu[restaurant_id]['menus'] = dict(
-            todays_menu[restaurant_id]['menus'])
+        if restaurant_name not in todays_menu:
+            todays_menu[restaurant_name] = defaultdict(list)
+
+        todays_menu[restaurant_name][menu_uid].append(
+            {'menu_type': menu_type,
+             'foods': [{'food_name': food, 'diet': diet}
+                       for food, diet in zip(foods, diets)]
+             }
+        )
 
     return todays_menu
 

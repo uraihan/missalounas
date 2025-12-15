@@ -1,27 +1,29 @@
 from typing import List
 from dataclasses import dataclass
-from datetime import datetime
 
 
 @dataclass
 class IndividualMenu:
     food_name: str
     diets: str
+    menu_type: str
     date: str
     # ingredients: str
-    menu_type: str
-    menu_type_id: int
-    # menu_id: int
+    menu_uid: int
     lang: str
 
 
 @dataclass
-class UnifiedJson:
+class RestaurantContainer:
     restaurant_name: str
     area: str
     menu_options: List[IndividualMenu]
 
 
+@dataclass
+class CityContainer:
+    city_name: str
+    restaurants: List[RestaurantContainer]
 # example output:
 # resulted_json = {'restaurant_name': 'newton',
 #                  'menu_options': [

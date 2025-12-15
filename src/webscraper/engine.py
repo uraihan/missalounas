@@ -9,7 +9,8 @@ from webscraper import utils, db_interface
 from webscraper.config import CITIES, URLS, SUPPORTED_LANGS
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='./log/webscraper_engine_run.log', encoding='utf-8',
+logging.basicConfig(filename='./log/webscraper_engine_run.log',
+                    encoding='utf-8',
                     level=logging.DEBUG)
 
 
@@ -26,13 +27,14 @@ def parse_restaurants(chain, area_name, rest_list):
     logger.info(f"Parsing {chain} in {area_name}...")
     weekly_menu = []
     for restaurant, id in rest_list.items():
+        restaurant_menus = []
         for lang in SUPPORTED_LANGS:
             try:
                 # use different url based on the name of the chain
                 url = get_restaurant_url(chain, id, lang=lang)
                 response = requests.get(url)
                 response.raise_for_status()
-                response_json = json.loads(response.text)
+                response_json = response.json()
             except requests.RequestException as e:
                 logger.error(f"Error fetching from URL: {e}")
                 print("An error was encountered. Check the logfile.")
@@ -55,13 +57,11 @@ def parse_restaurants(chain, area_name, rest_list):
                 resp = juvenes.parse_response(
                     restaurant, area_name, lang, response_json)
 
-            weekly_menu.extend(resp)
+            restaurant_menus.extend(resp)
 
-    # compiled_dict[chain] = chain_list
-    # return compiled_dict
+        # combine english and finnish menus
+        weekly_menu.extend(utils.combine_restaurants(restaurant_menus))
 
-    # combine english and finnish menus
-    weekly_menu = utils.combine_restaurants(weekly_menu)
     return weekly_menu
 
 
@@ -110,6 +110,6 @@ if __name__ == "__main__":
     for item in collect_data:
         city = item['city']
         print(f"Insert restaurant menus in {city}")
-        restaurant_data = item['restaurants']
+        restaurant_data = item.get('restaurants')
         city_id = db_interface.insert_city(city)
         db_interface.insert_restaurants(city_id, restaurant_data)
