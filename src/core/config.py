@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,4 +21,4 @@ db_string = db_string
 
 DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
-DEFAULT_DAY = datetime.now().strftime("%A").lower()
+DEFAULT_DAY = datetime.now(ZoneInfo("Europe/Helsinki")).strftime("%A").lower()
