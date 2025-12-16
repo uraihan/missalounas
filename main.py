@@ -33,19 +33,13 @@ def run_webscraper():
     os.system('uv run src/webscraper/engine.py')
 
 
-def get_default_params():
-    return {'day': utils.get_current_day(),
-            'city': DEFAULT_CITY,
-            'lang': request.accept_languages.best_match(['en', 'fi']) or 'en'}
-
-
 def build_url(**queried_items):
     """
     Helper function to build a URL preserving current parameters and
     applying new ones. Only includes parameters that differ from defaults.
     """
     # Default parameters
-    defaults = get_default_params()
+    defaults = utils.get_default_params(request)
 
     # Get current parameters
     params = {
@@ -85,19 +79,10 @@ def inject_context():
     }
 
 
-def get_current_params():
-    defaults = get_default_params()
-
-    return {'lang': request.args.get('lang', defaults['lang']),
-            'day': request.args.get('day', defaults['day']),
-            'city': request.args.get('city', defaults['city'])
-            }
-
-
 @app.get("/", endpoint="index")
 def index():
     # Get current params
-    current_params = get_current_params()
+    current_params = utils.get_current_params(request)
     lang = current_params['lang']
 
     # Date handler
