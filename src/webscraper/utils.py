@@ -2,7 +2,7 @@ from collections import defaultdict, namedtuple
 from datetime import datetime
 from dataclasses import asdict
 
-from core.config import DATE_FORMAT
+from app.config import DATE_FORMAT
 from webscraper.models import unified_json
 
 

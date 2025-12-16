@@ -14,14 +14,12 @@ tampere = [
     {
         "areaName": "Keskusta",
         "restaurants": {
-            "juvenes": {
-                "Alakuppila": "13",
-                "Yliopiston Ravintola": "13",
-                "YR Yläkuppila": "13",
-                "YR Fusion Kitchen": "13",
-                "Rata": "72",
-                "Frenckell": "33"
-            },
+            "juvenes": {"Alakuppila": "13",
+                        "Yliopiston Ravintola": "13",
+                        "YR Yläkuppila": "13",
+                        "YR Fusion Kitchen": "13",
+                        "Rata": "72",
+                        "Frenckell": "33"},
             "compass": {"Minerva": "0815"},
             "sodexo": {"Linna": "116"}
         }
@@ -66,17 +64,13 @@ helsinki = [
     {
         "areaName": "Otaniemi",
         "restaurants": {
-            "compass": {
-                "A-Bloc": "3087",
-                "TUAS": "0199",
-                "Alvari": "0190",
-                "Dipoli": "3101",
-                "Laurea Otaniemen Kampus": "3292"
-            },
-            "sodexo": {
-                "Kvarkki": "86",
-                "Tietotekniikantalo": "6754"
-            }
+            "compass": {"A-Bloc": "3087",
+                        "TUAS": "0199",
+                        "Alvari": "0190",
+                        "Dipoli": "3101",
+                        "Laurea Otaniemen Kampus": "3292"},
+            "sodexo": {"Kvarkki": "86",
+                       "Tietotekniikantalo": "6754"}
         }
     },
     {
@@ -146,5 +140,6 @@ URLS = {
     "juvenes": "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/93077/{id}?lang={lang}",
     "compass": "https://www.compass-group.fi/menuapi/feed/json?costNumber={id}&language={lang}",
     "sodexo": "https://www.sodexo.fi{lang}ruokalistat/output/weekly_json/{id}",
-    "campusravita": "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/97603/{id}?lang={lang}"
+    "campusravita":
+    "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/97603/{id}?lang={lang}"
 }

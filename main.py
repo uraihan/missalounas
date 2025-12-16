@@ -1,12 +1,12 @@
 import os
-import utils
 import logging
 
 from flask import Flask, render_template, request
 from flask_apscheduler import APScheduler
 from datetime import datetime
 
-from core.config import DEFAULT_CITY
+from app import utils
+from app.config import DEFAULT_CITY
 
 
 app = Flask(__name__)
@@ -33,25 +33,26 @@ def run_webscraper():
     os.system('uv run src/webscraper/engine.py')
 
 
+def get_default_params():
+    return {'day': utils.get_current_day(),
+            'city': DEFAULT_CITY,
+            'lang': request.accept_languages.best_match(['en', 'fi']) or 'en'}
+
+
 def build_url(**queried_items):
     """
     Helper function to build a URL preserving current parameters and
     applying new ones. Only includes parameters that differ from defaults.
     """
     # Default parameters
-    defaults = {
-        'day': utils.get_current_day(),
-        'city': DEFAULT_CITY,
-        'lang': request.accept_languages.best_match(['fi', 'en']) or 'en'
-    }
+    defaults = get_default_params()
 
     # Get current parameters
     params = {
-        'day': request.args.get('day', utils.get_current_day()),
-        'city': request.args.get('city', DEFAULT_CITY),
+        'day': request.args.get('day', defaults['day']),
+        'city': request.args.get('city', defaults['city']),
         'area': request.args.get('area'),
-        'lang': request.args.get('lang',
-                                 request.accept_languages.best_match(['fi', 'en']) or 'en')
+        'lang': request.args.get('lang', defaults['lang'])
     }
 
     if (queried_items.get("city") and
@@ -84,20 +85,27 @@ def inject_context():
     }
 
 
+def get_current_params():
+    defaults = get_default_params()
+
+    return {'lang': request.args.get('lang', defaults['lang']),
+            'day': request.args.get('day', defaults['day']),
+            'city': request.args.get('city', defaults['city'])
+            }
+
+
 @app.get("/", endpoint="index")
 def index():
-    # Get default arguments
-    lang = request.args.get('lang')
-    if lang is None:
-        lang = request.accept_languages.best_match(['fi', 'en']) or 'en'
+    # Get current params
+    current_params = get_current_params()
+    lang = current_params['lang']
 
     # Date handler
-    selected_day = request.args.get('day',
-                                    utils.get_current_day())
+    selected_day = current_params['day']
     selected_date = utils.get_current_week_date(selected_day)
 
     # City handler
-    selected_city = request.args.get('city', DEFAULT_CITY)
+    selected_city = current_params['city']
     cities = utils.get_cities()
 
     # Get all area based on selected city
@@ -123,5 +131,4 @@ def index():
 
 
 if __name__ == "__main__":
-
     app.run()

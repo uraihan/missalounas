@@ -2,7 +2,7 @@ import psycopg
 
 from psycopg.rows import dict_row
 
-from core.config import db_string
+from app.config import db_string
 
 
 def create_tables():
