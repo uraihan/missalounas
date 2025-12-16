@@ -13,7 +13,7 @@ RUN npm install
 COPY static/daisy.css ./static/
 COPY templates/ ./templates/
 
-RUN npx tailwindcss -i ./static/daisy.css -o ./static/main.css --minify
+RUN npx @tailwindcss/cli -i ./static/daisy.css -o ./static/main.css --minify
 
 ##### BUILDING PYTHON #####
 FROM python:3.12-slim-trixie
