@@ -2,9 +2,14 @@ import psycopg
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from psycopg.rows import dict_row
 from core.config import db_string, DATE_FORMAT
+
+
+def get_current_day():
+    return datetime.now(ZoneInfo("Europe/Helsinki")).strftime("%A").lower()
 
 
 def get_cities():

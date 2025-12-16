@@ -6,7 +6,8 @@ from flask import Flask, render_template, request
 from flask_apscheduler import APScheduler
 from datetime import datetime
 
-from core.config import DEFAULT_CITY, DEFAULT_DAY
+from core.config import DEFAULT_CITY
+
 
 app = Flask(__name__)
 scheduler = APScheduler()
@@ -39,14 +40,14 @@ def build_url(**queried_items):
     """
     # Default parameters
     defaults = {
-        'day': DEFAULT_DAY,
+        'day': utils.get_current_day(),
         'city': DEFAULT_CITY,
         'lang': request.accept_languages.best_match(['fi', 'en']) or 'en'
     }
 
     # Get current parameters
     params = {
-        'day': request.args.get('day', DEFAULT_DAY),
+        'day': request.args.get('day', utils.get_current_day()),
         'city': request.args.get('city', DEFAULT_CITY),
         'area': request.args.get('area'),
         'lang': request.args.get('lang',
@@ -92,7 +93,7 @@ def index():
 
     # Date handler
     selected_day = request.args.get('day',
-                                    DEFAULT_DAY)
+                                    utils.get_current_day())
     selected_date = utils.get_current_week_date(selected_day)
 
     # City handler
