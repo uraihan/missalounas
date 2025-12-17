@@ -19,3 +19,4 @@ db_string = db_string
 
 DEFAULT_CITY = "Tampere"
 DATE_FORMAT = "%d.%m.%Y"
+PH_SECRETS = os.getenv("PH_SECRETS")

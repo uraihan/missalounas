@@ -1,13 +1,20 @@
 import os
 import logging
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request  # , session
+# from flask_session import Session
 from flask_apscheduler import APScheduler
 from datetime import datetime
+from posthog import Posthog
 
 from app import utils
-from app.config import DEFAULT_CITY
+from app.config import DEFAULT_CITY, PH_SECRETS
 
+# placeholder for future posthog implementation
+posthog = Posthog(
+    f'{PH_SECRETS}',
+    host='https://eu.i.posthog.com'
+)
 
 app = Flask(__name__)
 scheduler = APScheduler()
@@ -81,6 +88,9 @@ def inject_context():
 
 @app.get("/", endpoint="index")
 def index():
+    posthog.capture(
+        '$pageview'
+    )
     # Get current params
     current_params = utils.get_current_params(request)
     lang = current_params['lang']
