@@ -77,7 +77,6 @@ def parse_response(restaurant_name, area_name, lang, response_json):
     """Parse JSON response from Juvenes.
     Params:
         restaurant_name: Name of the restaurant to be queried from API.
-        restaurant_name: Name of restaurant to be parsed.
         area_name: Area that the restaurant belongs to.
         response_json: A JSON response from Juvenes.
 
