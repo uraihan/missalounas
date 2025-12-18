@@ -55,10 +55,17 @@ helsinki = [
     {
         "areaName": "Keskusta",
         "restaurants": {
-            "sodexo": {
-                "HY-Päärakennus": "1045996",
-                "Musiikkitalo Klubi": "3100"
-            }
+            "sodexo": {"HY-Päärakennus": "1045996",
+                       "Musiikkitalo Klubi": "3100"},
+            "unicafe": {"Kaivopiha": ["2558", "2543"],
+                        "Kaisa-talo": ["4383", "1375"],
+                        "Metsätalo": ["2583", "1359"],
+                        "Myohä Cafe & Bar": ["4379", "4377"],
+                        "Olivia": ["2510", "1360"],
+                        "Porthania": ["2514", "1364"],
+                        "Rotunda": ["2585", "1370"],
+                        "Soc&Kom": ["2511", "1372"],
+                        "Topelias": ["2696", "1362"]}
         }
     },
     {
@@ -76,21 +83,21 @@ helsinki = [
     {
         "areaName": "Töölö",
         "restaurants": {
-            "compass": {
-                "Töölö-37": "3704",
-                "Hanken": "3406",
-                "Tempo": "1252"
-            }
+            "compass": {"Töölö-37": "3704",
+                        "Hanken": "3406",
+                        "Tempo": "1252"},
+            "unicafe": {"Serpens": ["5393", "5391"]}
         }
     },
     {
         "areaName": "Arabia & Kumpula",
         "restaurants": {
-            "compass": {
-                "Arcada": "3003",
-                "DIAK-Kalasatama": "3104",
-                "Luova": "1251"
-            }
+            "compass": {"Arcada": "3003",
+                        "DIAK-Kalasatama": "3104",
+                        "Luova": "1251"},
+            "unicafe": {"Chemicum": ["2498", "1354"],
+                        "Exactum": ["2500", "1356"],
+                        "Physicum": ["2591", "1363"]}
         }
     },
     {
@@ -103,7 +110,12 @@ helsinki = [
     {
         "areaName": "Viikki",
         "restaurants": {
-            "sodexo": {"Ladonlukko": "68"}
+            "sodexo": {"Ladonlukko": "68"},
+            "unicafe": {"Biokeskus": ["2501", "1335"],
+                        "Biokeskus 2": ["4575", "4573"],
+                        "Infokeskus (Student/alakerta)": ["4518", "4516"],
+                        "Tahka": ["4577", "4576"],
+                        "Viikuna": ["2589", "1374"]}
         }
     },
     {
@@ -111,6 +123,13 @@ helsinki = [
         "restaurants": {
             "compass": {"Laurea Tikkurilan kampus": "3032"},
             "sodexo": {"Metropolia Myyrmäki": "152"}
+        }
+    },
+    {
+        "areaName": "Meilahti",
+        "restaurants": {
+            "unicafe": {"Meilahti": ["2508", "1358"],
+                        "Terkko": ["5225", "5223"]}
         }
     }
 ]
@@ -141,5 +160,6 @@ URLS = {
     "compass": "https://www.compass-group.fi/menuapi/feed/json?costNumber={id}&language={lang}",
     "sodexo": "https://www.sodexo.fi{lang}ruokalistat/output/weekly_json/{id}",
     "campusravita":
-    "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/97603/{id}?lang={lang}"
+    "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/97603/{id}?lang={lang}",
+    "unicafe": "https://unicafe.fi/wp-json/swiss/v1/restaurants/?lang={lang}"
 }

@@ -3,7 +3,7 @@ import json
 import itertools
 import logging
 
-from parsers import juvenes, compass_group, sodexo
+from parsers import juvenes, compass_group, sodexo, unicafe
 
 from webscraper import utils, db_interface
 from webscraper.config import CITIES, URLS, SUPPORTED_LANGS
@@ -28,6 +28,12 @@ def parse_restaurants(chain, area_name, rest_list):
     weekly_menu = []
     for restaurant, id in rest_list.items():
         restaurant_menus = []
+        # special case for unicafe
+        if chain == "unicafe":
+            resp = unicafe.parse_response(restaurant, area_name, id)
+            weekly_menu.extend(resp)
+            continue
+
         for lang in SUPPORTED_LANGS:
             try:
                 # use different url based on the name of the chain

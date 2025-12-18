@@ -34,14 +34,16 @@ def combine_restaurants(weekly_menu):
             for name, option in combined_menu.items()]
 
 
-def format_date(original_date, response_format):
+def format_date(original_date, response_format, year=None):
     date_format = DATE_FORMAT
     try:
         datetime_fmt = datetime.strptime(
             str(original_date), response_format)
+        if year:
+            datetime_fmt = datetime_fmt.replace(year)
         datetime_fmt = f"{datetime_fmt.strftime(date_format)}"
     except Exception as e:
-        raise f"Error converting date: {e}"
+        raise  # f"Error converting date: {e}"
 
     return datetime_fmt
 
