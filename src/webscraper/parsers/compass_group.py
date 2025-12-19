@@ -38,7 +38,7 @@ def parse_dietcodes(food_string):
             diets[idx] = "H"
 
     food_item = "".join(food_item)
-    food = re.sub("[\*]", "", food_item).strip("()").strip()
+    food = re.sub(r"[\*]", "", food_item).strip("()").strip()
     diets = ", ".join(diets)
     return (food, diets)
 
@@ -47,24 +47,29 @@ def transform_response(restaurant_name, area_name, parsed_response):
     lang = parsed_response["lang"]
     menu_options = []
 
-    for item in parsed_response["MenusForDays"]:
-        date = item.get("Date")
-        date_format = "%Y-%m-%dT%H:%M:%S%z"
-        date = utils.format_date(date, date_format)
-        for idx, option in enumerate(item["SetMenus"]):
-            menu_type = option.get("Name")
-            menu_type_id = option.get("SortOrder")
-            for food in option.get("Components"):
-                food_name, diets = parse_dietcodes(food)
-                menu_item = unified_json.IndividualMenu(
-                    food_name,
-                    diets,
-                    menu_type=menu_type,
-                    date=date,
-                    menu_uid=menu_type_id,
-                    lang=lang,
-                )
-                menu_options.append(menu_item)
+    if not parsed_response.get('MenusForDays'):
+        menu_options.append(utils.create_empty_item(restaurant_name,
+                                                    area_name,
+                                                    lang))
+    else:
+        for item in parsed_response["MenusForDays"]:
+            date = item.get("Date")
+            date_format = "%Y-%m-%dT%H:%M:%S%z"
+            date = utils.format_date(date, date_format)
+            for idx, option in enumerate(item["SetMenus"]):
+                menu_type = option.get("Name")
+                menu_type_id = option.get("SortOrder")
+                for food in option.get("Components"):
+                    food_name, diets = parse_dietcodes(food)
+                    menu_item = unified_json.IndividualMenu(
+                        food_name,
+                        diets,
+                        menu_type=menu_type,
+                        date=date,
+                        menu_uid=menu_type_id,
+                        lang=lang,
+                    )
+                    menu_options.append(menu_item)
 
     restaurant_dict = unified_json.RestaurantContainer(
         restaurant_name, area_name, menu_options
@@ -84,13 +89,10 @@ def parse_response(restaurant_name, area_name, lang, response_json):
         specification.
     """
     try:
-        simplified_resp = (
-            jq.compile("""
-            del(. | .PriceHeader)
-        """)
-            .input_value(response_json)
-            .all()
-        )
+        simplified_resp = (jq.compile("del(. | .PriceHeader)")
+                           .input_value(response_json)
+                           .all()
+                           )
     except ValueError as e:
         logger.warning(f"""{e}.
             Restaurant {restaurant_name} either has no JSON for language
