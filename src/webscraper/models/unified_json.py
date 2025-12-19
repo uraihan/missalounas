@@ -1,4 +1,3 @@
-from typing import List
 from dataclasses import dataclass
 
 
@@ -17,13 +16,13 @@ class IndividualMenu:
 class RestaurantContainer:
     restaurant_name: str
     area: str
-    menu_options: List[IndividualMenu]
+    menu_options: list[IndividualMenu]
 
 
 @dataclass
 class CityContainer:
     city_name: str
-    restaurants: List[RestaurantContainer]
+    restaurants: list[RestaurantContainer]
 # example output:
 # resulted_json = {'restaurant_name': 'newton',
 #                  'menu_options': [
