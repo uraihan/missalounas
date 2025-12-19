@@ -34,7 +34,7 @@ def parse_dietcodes(food_string):
             diets.append(item)
             food_item.remove(item)
     for idx, item in enumerate(diets):
-        if item is "*":
+        if item == "*":
             diets[idx] = "H"
 
     food_item = "".join(food_item)
