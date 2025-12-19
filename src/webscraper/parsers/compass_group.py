@@ -25,7 +25,7 @@ DIET_CODES = {
 def parse_dietcodes(food_string):
     food_item = food_string.split(",")
     food_item = re.split(
-        r"(?:^|[^a-zA-Z])([A-Z]{1,3}|veg|Veg|VEG|vega|Vega|VEGA|\*)(?:^|[^a-zA-Z])",
+        r"(?:^|[,\s()])([A-Z]{1,3}|veg|Veg|VEG|vega|Vega|VEGA|\*)(?:^|[,\s()])",
         food_string,
     )
     diets = []
