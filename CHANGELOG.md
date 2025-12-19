@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0
+## 0.3.0
 ### Added
 - Experimental diet code parsing on Compass-group parser. This one handle diet
 code parsing with regex and dictionary, which is a bit better at handling 
