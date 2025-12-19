@@ -20,9 +20,13 @@ FROM python:3.12-slim-trixie
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    curl \
+    curl locales \
     # postgresql-client \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    sed -i -e 's/# fi_FI.UTF-8 UTF-8/fi_FI.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
