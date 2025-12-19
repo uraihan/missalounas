@@ -122,12 +122,12 @@ def insert_restaurants(city_id, weekly_menu):
                     WHERE NOT EXISTS (
                         SELECT name FROM foods
                         WHERE name = %s AND date = %s AND menu_uid = %s
-                        AND restaurant_id = %s
+                        AND restaurant_id = %s AND lang = %s
                     )
                 """,
                     (
                         food_name, diets, menu_type, menu_uid, date, lang, restaurant_id,
-                        food_name, date, menu_uid, restaurant_id
+                        food_name, date, menu_uid, restaurant_id, lang
                     ),
                 )
                 # cursor.execute("""
