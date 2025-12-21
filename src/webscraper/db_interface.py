@@ -11,9 +11,9 @@ def create_tables():
         cursor = conn.cursor()
 
         # Very dirty solution > need to come up with better one
-        # cursor.execute("DROP TABLE IF EXISTS cities CASCADE")
-        # cursor.execute("DROP TABLE IF EXISTS foods CASCADE")
-        # cursor.execute("DROP TABLE IF EXISTS restaurants CASCADE")
+        cursor.execute("DROP TABLE IF EXISTS cities CASCADE")
+        cursor.execute("DROP TABLE IF EXISTS foods CASCADE")
+        cursor.execute("DROP TABLE IF EXISTS restaurants CASCADE")
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cities (
