@@ -98,22 +98,26 @@ def parse_response(restaurant_name, area_name, lang, response_json):
     except jsonschema.exceptions.ValidationError as e:
         logger.error(f"JSON data does not match intended schema. {e.message}")
 
-    restaurant_data = get_restaurant_data(restaurant_name, response_json)
-    parsed_json = []
-    if not restaurant_data:
-        # NOTE: If JSON response is an empty array, individually
-        # assign UnifiedJson object (?)
-        parsed_json.append(utils.create_empty_item(restaurant_name,
-                                                   area_name, lang))
+    if not response_json:
+        return [utils.create_empty_item(restaurant_name, area_name, lang)]
     else:
+        restaurant_data = get_restaurant_data(restaurant_name, response_json)
+        parsed_json = []
+        # if not restaurant_data:
+        #     # NOTE: If JSON response is an empty array, individually
+        #     # assign UnifiedJson object (?)
+        #     parsed_json.append(utils.create_empty_item(restaurant_name, area_name, lang))
         for data in restaurant_data:
-            container = [get_unified_menu(option, item, day, lang)
-                         for day in data.get('menus')
-                         for option in day.get('mealoptions')
-                         for item in option.get('menuItems')]
+            container = [
+                get_unified_menu(option, item, day, lang)
+                for day in data.get("menus")
+                for option in day.get("mealoptions")
+                for item in option.get("menuItems")
+            ]
 
             restaurant_object = unified_json.RestaurantContainer(
-                restaurant_name, area_name, container)
+                restaurant_name, area_name, container
+            )
             parsed_json.append(asdict(restaurant_object))
 
     if parsed_json:
