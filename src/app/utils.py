@@ -116,7 +116,7 @@ def get_todays_menu(city, selected_area, selected_lang, selected_date):
 
 
 def get_current_week_date(weekday):
-    today = get_current_day()
+    today = datetime.now(ZoneInfo("Europe/Helsinki"))
     startweek = today - timedelta(days=today.weekday())
 
     weekday_map = {
