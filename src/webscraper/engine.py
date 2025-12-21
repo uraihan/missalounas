@@ -50,18 +50,20 @@ def parse_restaurants(chain, area_name, rest_list):
                 print("An error was encountered. Check the logfile.")
                 raise
 
-            if chain == 'juvenes':
+            if chain == "juvenes":
                 resp = juvenes.parse_response(
-                    restaurant, area_name, lang, response_json)
-            if chain == 'compass':
+                    restaurant, area_name, lang, response_json
+                )
+            if chain == "compass" or chain == "unica":
                 resp = compass_group.parse_response(
-                    restaurant, area_name, lang, response_json)
-            if chain == 'sodexo':
-                resp = sodexo.parse_response(
-                    restaurant, area_name, lang, response_json)
-            if chain == 'campusravita':
+                    restaurant, area_name, lang, response_json
+                )
+            if chain == "sodexo":
+                resp = sodexo.parse_response(restaurant, area_name, lang, response_json)
+            if chain == "campusravita":
                 resp = juvenes.parse_response(
-                    restaurant, area_name, lang, response_json)
+                    restaurant, area_name, lang, response_json
+                )
 
             restaurant_menus.extend(resp)
 
@@ -77,8 +79,7 @@ if __name__ == "__main__":
     collect_data = []
     for city_name, city_data in CITIES:
         print("===========================")
-        print(f"Processing Restaurants in {
-            city_name}...\n--------------------")
+        print(f"Processing Restaurants in {city_name}...\n--------------------")
         city_data = utils.unpickled_city_dict(city_data)
 
         restaurants_in_city = [
