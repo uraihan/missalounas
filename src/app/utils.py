@@ -103,27 +103,30 @@ def get_todays_menu(city, selected_area, selected_lang, selected_date):
             todays_menu[restaurant_name] = defaultdict(list)
 
         todays_menu[restaurant_name][menu_uid].append(
-            {'menu_type': menu_type,
-             'foods': [{'food_name': food, 'diet': diet}
-                       for food, diet in zip(foods, diets)]
-             }
+            {
+                "menu_type": menu_type,
+                "foods": [
+                    {"food_name": food, "diet": diet}
+                    for food, diet in zip(foods, diets)
+                ],
+            }
         )
 
     return todays_menu
 
 
 def get_current_week_date(weekday):
-    today = datetime.now()
+    today = get_current_day()
     startweek = today - timedelta(days=today.weekday())
 
     weekday_map = {
-        'monday': 0,
-        'tuesday': 1,
-        'wednesday': 2,
-        'thursday': 3,
-        'friday': 4,
-        'saturday': 5,
-        'sunday': 6
+        "monday": 0,
+        "tuesday": 1,
+        "wednesday": 2,
+        "thursday": 3,
+        "friday": 4,
+        "saturday": 5,
+        "sunday": 6,
     }
     offset = weekday_map.get(weekday.lower(), 0)
     target_date = startweek + timedelta(days=offset)
