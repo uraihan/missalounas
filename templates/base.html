@@ -20,7 +20,7 @@
       <ul class="menu menu-horizontal items-center">
         {% for area in vars.areas %}
         <li>
-          {% if selected_area == area.get('area') %}
+          {% if vars.selected_area == area.get('area') %}
           <a
             class="bg-neutral"
             href="{{ url_for('index', **build_url(area=area.get('area'))) }}"
