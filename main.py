@@ -90,7 +90,7 @@ def index():
     # Retrieve menu based on the requested filter
     menus = utils.get_todays_menu(selected_city, selected_area, lang, selected_date)
 
-    var = SimpleNamespace(
+    vars = SimpleNamespace(
         cities=cities,
         areas=all_areas,
         menus=menus,
@@ -101,7 +101,7 @@ def index():
         lang=lang,
     )
 
-    return render_template("index.html", var=var)
+    return render_template("index.html", vars=vars)
 
 
 if __name__ == "__main__":

@@ -1,37 +1,29 @@
-{% extends 'base.html' %}
-{% block cards %}
-    {% for rest_name, item in menus.items() %}
-    <div class='card border-1 p-4'>
-        <h2 class="mb-4 leading-10"> {{ rest_name }} </h2>
-        <div class="p-4">
-            {% if item %}
-            {% for menu_id, menus in item.items() %}
-            <div>
-            {% for item in menus %}
+{% extends 'base.html' %} {% block cards %} {% for rest_name, item in
+vars.menus.items() %}
+<div class="card border-1 p-4">
+  <h2 class="mb-4 leading-10">{{ rest_name }}</h2>
+  <div class="p-4">
+    {% if item %} {% for menu_id, menus in item.items() %}
+    <div>
+      {% for item in menus %}
 
-                <div class="border-y-[0.5px]">
-                    {%if item.get('menu_type')%}
-                    <p class="text-sm -ms-3 -mb-2">{{ item.get('menu_type') }}</p>
-                    {% endif %}
-                    {% for food in item.get('foods') %}
-                    <div class="flex justify-between items-center">
-                        <p class='flex-1'>{{ food['food_name'] }}</p>
-                        {% if food['diet'] != "()" and food['diet'] %}
-                            <p class='text-right max-w-[50%] text-sm'>{{
-                            food['diet'] }}</p>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-            </div>
-                {% endfor %}
-
-            {% else %}
-                <p>No menu found</p>
-            {% endif %}
+      <div class="border-y-[0.5px]">
+        {%if item.get('menu_type')%}
+        <p class="text-sm -ms-3 -mb-2">{{ item.get('menu_type') }}</p>
+        {% endif %} {% for food in item.get('foods') %}
+        <div class="flex justify-between items-center">
+          <p class="flex-1">{{ food['food_name'] }}</p>
+          {% if food['diet'] != "()" and food['diet'] %}
+          <p class="text-right max-w-[50%] text-sm">{{ food['diet'] }}</p>
+          {% endif %}
         </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-{% endblock %}
-
+    {% endfor %} {% else %}
+    <p>No menu found</p>
+    {% endif %}
+  </div>
+</div>
+{% endfor %} {% endblock %}

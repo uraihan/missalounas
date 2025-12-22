@@ -1,48 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Missä Lounas?</title>
-        <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet" />
-        <!-- <link href="{{ url_for('static', filename='secondary.css') }}" rel="stylesheet" /> -->
-    </head>
-    <body>
-        <header>
-            <div>
-            {% import 'navbar.html' as navbar %}
-            {{ navbar.navbar_desktop(cities, selected_city, selected_day, lang, date)}}
-            </div>
-        </header>
-        <main class="mt-16 sm:mt-0">
-            <ul class="menu menu-horizontal items-center">
-                {% for area in areas %}
-                <li>
-                    {% if selected_area == area.get('area') %}
-                    <a class="bg-neutral" href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
-                        {{ area.get('area') }}
-                    </a>
-                    {% else %}
-                    <a href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
-                        {{ area.get('area') }}
-                    </a>
-                    {% endif %}
-                </li>
-                {% endfor %}
-            </ul>
-            <section class='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-items-stretch gap-4'>
-                {% block cards %}{% endblock %}
-            </section>
-        </main>
-        <!-- <footer class="footer static bottom-0 min-h-24 mt-12"> -->
-        <!--     <aside class="grid-flow-col"> -->
-        <!--         <p> -->
-        <!--             Found any mistakes? Let us know  -->
-        <!--             <a href="https://github.com/uraihan/missalounas/issues"> -->
-        <!--                 <u>here</u> -->
-        <!--             </a>by creating a new issue! -->
-        <!--         </p> -->
-        <!--     </aside> -->
-        <!-- </footer> -->
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Missä Lounas?</title>
+    <link
+      href="{{ url_for('static', filename='main.css') }}"
+      rel="stylesheet"
+    />
+    <!-- <link href="{{ url_for('static', filename='secondary.css') }}" rel="stylesheet" /> -->
+  </head>
+  <body>
+    <header>
+      <div>
+        {% import 'navbar.html' as navbar %} {{ navbar.navbar_desktop(vars)}}
+      </div>
+    </header>
+    <main class="mt-16 sm:mt-0">
+      <ul class="menu menu-horizontal items-center">
+        {% for area in vars.areas %}
+        <li>
+          {% if selected_area == area.get('area') %}
+          <a
+            class="bg-neutral"
+            href="{{ url_for('index', **build_url(area=area.get('area'))) }}"
+          >
+            {{ area.get('area') }}
+          </a>
+          {% else %}
+          <a href="{{ url_for('index', **build_url(area=area.get('area'))) }}">
+            {{ area.get('area') }}
+          </a>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      <section
+        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-items-stretch gap-4"
+      >
+        {% block cards %}{% endblock %}
+      </section>
+    </main>
+    <!-- <footer class="footer static bottom-0 min-h-24 mt-12"> -->
+    <!--     <aside class="grid-flow-col"> -->
+    <!--         <p> -->
+    <!--             Found any mistakes? Let us know  -->
+    <!--             <a href="https://github.com/uraihan/missalounas/issues"> -->
+    <!--                 <u>here</u> -->
+    <!--             </a>by creating a new issue! -->
+    <!--         </p> -->
+    <!--     </aside> -->
+    <!-- </footer> -->
+  </body>
 </html>
