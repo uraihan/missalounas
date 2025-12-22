@@ -100,19 +100,20 @@ def index():
         selected_area = all_areas[0].get('area')
 
     # Retrieve menu based on the requested filter
-    menus = utils.get_todays_menu(
-        selected_city, selected_area, lang, selected_date)
+    menus = utils.get_todays_menu(selected_city, selected_area, lang, selected_date)
 
-    return render_template("index.html",
-                           cities=cities,
-                           areas=all_areas,
-                           menus=menus,
-                           selected_city=selected_city,
-                           selected_area=selected_area,
-                           selected_day=selected_day,
-                           date=selected_date,
-                           lang=lang
-                           )
+    var = SimpleNamespace(
+        cities=cities,
+        areas=all_areas,
+        menus=menus,
+        selected_city=selected_city,
+        selected_area=selected_area,
+        selected_day=selected_day,
+        date=selected_date,
+        lang=lang,
+    )
+
+    return render_template("index.html", var=var)
 
 
 if __name__ == "__main__":
