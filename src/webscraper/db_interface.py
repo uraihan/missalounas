@@ -1,5 +1,4 @@
 import psycopg
-
 from psycopg.rows import dict_row
 
 from app.config import db_string
@@ -18,15 +17,15 @@ def create_tables():
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cities (
                 id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                name VARCHAR(200) NOT NULL UNIQUE
+                name VARCHAR NOT NULL UNIQUE
                 )
         """)
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS restaurants (
                 id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                name VARCHAR(200) NOT NULL,
-                area VARCHAR(200) NOT NULL,
+                name VARCHAR NOT NULL,
+                area VARCHAR NOT NULL,
                 city_id INTEGER REFERENCES cities(id)
                 )
         """)  # name column: candidate for unique constraint
@@ -34,12 +33,12 @@ def create_tables():
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS foods (
                 id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-                name VARCHAR(200),
-                diets VARCHAR(100),
-                menu_type VARCHAR(200),
+                name VARCHAR,
+                diets VARCHAR,
+                menu_type VARCHAR,
                 menu_uid INTEGER,
-                date VARCHAR(20),
-                lang VARCHAR(10),
+                date VARCHAR,
+                lang VARCHAR,
                 created_at timestamp DEFAULT current_timestamp,
                 restaurant_id INTEGER REFERENCES restaurants(id)
                 )
@@ -126,8 +125,18 @@ def insert_restaurants(city_id, weekly_menu):
                     )
                 """,
                     (
-                        food_name, diets, menu_type, menu_uid, date, lang, restaurant_id,
-                        food_name, date, menu_uid, restaurant_id, lang
+                        food_name,
+                        diets,
+                        menu_type,
+                        menu_uid,
+                        date,
+                        lang,
+                        restaurant_id,
+                        food_name,
+                        date,
+                        menu_uid,
+                        restaurant_id,
+                        lang,
                     ),
                 )
                 # cursor.execute("""
