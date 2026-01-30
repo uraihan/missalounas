@@ -37,7 +37,7 @@ RUN mkdir -p log/
 
 COPY --from=tailwind-builder /node/static/main.css /app/static/
 
-EXPOSE 5000
+EXPOSE 8080
 
 RUN chmod +x /app/start.sh
 

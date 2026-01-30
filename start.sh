@@ -10,13 +10,13 @@ echo "Starting webserver"
 case $DEPLOY_ENV in
     PROD)
         echo "Starting Gunicorn..."
-        exec uv run gunicorn --bind 0.0.0.0:5000 main:app
+        exec uv run gunicorn --bind 0.0.0.0:8080 main:app
         ;;
     DEV)
         echo "Starting Flask development server..."
         exec uv run flask --app main run --host=0.0.0.0 --debug
         ;;
     *)
-        echo -n "Unknown ENVIRONMENT env variable (PROD or DEV)"
+        echo -n "Unknown DEPLOY_ENV variable (PROD or DEV)"
         ;;
 esac
