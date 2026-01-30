@@ -40,15 +40,8 @@ COPY . .
 
 COPY --from=tailwind-builder /app/static/main.css ./static/main.css
 
-RUN echo '#!/bin/bash\n\
-set -e\n\
-source /app/.venv/bin/activate\n\
-echo "Checking database..."\n\
-uv run src/app/db_check.py\n\
-echo "Starting Gunicorn server..."\n\
-exec gunicorn --bind 0.0.0.0:$PORT --timeout 120 --access-logfile - main:app\n\
-' > /app/start.sh && chmod +x /app/start.sh
+EXPOSE 5000
 
-EXPOSE 8080
+RUN chmod +x /app/start.sh
 
 CMD ["/app/start.sh"]
