@@ -1,26 +1,26 @@
 #### BUILDING TAILWIND CSS #####
-FROM node:20-alpine AS tailwind-builder
+FROM node:20-trixie-slim AS tailwind-builder
 
-WORKDIR /app
+WORKDIR /node
 
 # Copy nodejs dependency
-COPY package*.json ./
+COPY package*.json /node/
 
 # Install nodejs dependency
 RUN npm install
 
 # Copy necessary Tailwind CSS files to generate main.css
-COPY static/daisy.css ./static/
+COPY ./static/daisy.css /node/static/
 COPY templates/ ./templates/
 
 RUN npx @tailwindcss/cli -i ./static/daisy.css -o ./static/main.css --minify
 
 ##### BUILDING PYTHON #####
-FROM python:3.12-slim-trixie
+FROM python:3.12-slim-trixie AS app
+
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    curl locales \
+RUN apt-get update && apt-get install -y curl locales \
     # postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
@@ -30,15 +30,12 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-COPY . /app
+COPY . /app/
 
-RUN uv sync --locked --no-dev --no-install-project
-RUN uv sync --locked --no-dev --no-editable
+RUN uv sync --locked
 RUN mkdir -p log/
 
-COPY . .
-
-COPY --from=tailwind-builder /app/static/main.css ./static/main.css
+COPY --from=tailwind-builder /node/static/main.css /app/static/
 
 EXPOSE 5000
 
