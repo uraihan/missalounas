@@ -1,0 +1,7 @@
+.venv
+venv/
+.git
+.gitignore
+log/
+*.log
+node_modules/
