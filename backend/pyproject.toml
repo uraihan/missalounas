@@ -1,0 +1,23 @@
+[project]
+name = "missalounas"
+version = "0.4.0"
+description = "Student restaurant menus in Finland. All in one place."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "litestar[standard]>=2.24.0",
+    "msgspec>=0.21.1",
+    "psycopg[binary,pool]>=3.3.2",
+    "pytest>=9.0.2",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.3",
+]
+
+[tool.uv]
+package = true
+
+[project.scripts]
+webscraper = "webscraper:main"
+
+# [tool.setuptools]
+# packages = ["."]

@@ -1,0 +1,95 @@
+services:
+  # reverse-proxy:
+  #   image: traefik:v3.6
+  #   privileged: true
+  #   command:
+  #     - "--api.insecure=true"
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.exposedbydefault=false"
+  #     - "--entrypoints.web.address=:80"
+  #   ports:
+  #     - "80:80"
+  #     - "8010:8010"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+
+  dbmate:
+    image: amacneil/dbmate:2.34.1
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?sslmode=disable
+    volumes:
+      - ./db/migrations:/db/migrations:Z
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["--wait", "--migrations-dir", "./db/migrations", "up"]
+
+  db:
+    image: postgres:18.1
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASSWORD
+      POSTGRES_DB: $DB_NAME
+    # volumes:
+    #   - pgdata:/var/lib/postgresql
+    ports:
+      - "5431:5431"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8010:8010"
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8010/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      dbmate:
+        condition: service_completed_successfully
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - .env
+  #   # environment:
+  #   # - API_BASE=http://backend:8000
+  #   # - ORIGIN=${ORIGIN_URL} # This is temporary and only in dev
+  #   depends_on:
+  #     - backend
+
+  # app:
+  #   build: .
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.app.entrypoints=web"
+  #     - "traefik.http.routers.app.rule=Host(`localhost`)"
+  #   ports:
+  #     - "5000:5000"
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
+volumes:
+  pgdata:

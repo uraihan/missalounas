@@ -1,0 +1,22 @@
+{% extends 'base_preline.html' %}
+{% block content %}
+  <header
+    class="flex flex-col sm:justify-start sm:flex-nowrap w-full text-sm py-3 dark:bg-neutral-800 mb-8"
+  >
+    {% import 'navbar_preline.html' as navbar %}
+    {{ navbar.navbar_desktop(vars) }}
+  </header>
+  <main class="mt-16 sm:mt-0 sm:mx-[5rem]">
+    {% from 'components/area_tab.html' import area_tab %}
+    {{ area_tab(vars.areas, vars.selected_area) }}
+    <section
+      class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-items-stretch gap-4"
+    >
+      {% import 'components/menu_cards.html' as cards %}
+      {% for rest_name, item in vars.menus.items() %}
+        {{ cards.card(rest_name, item) }}
+      {% endfor %}
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/preline/dist/preline.js"></script>
+{% endblock content %}

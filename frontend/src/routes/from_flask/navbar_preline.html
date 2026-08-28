@@ -1,0 +1,175 @@
+{%
+  from 'components/dropdowns.html' import chevron_icon, dropdown_button,
+  dropdown_menu, dropdown
+%}
+{% macro navbar_desktop(vars) %}
+  <nav>
+    <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Mobile Layout -->
+      <div class="flex flex-col lg:hidden">
+        <!-- Top Bar: Title and Settings -->
+        <div class="flex justify-between items-center py-3">
+          <!-- Title Section -->
+          <div class="flex flex-col">
+            <a class="text-xl sm:text-2xl font-bold" href="#">
+              Missä Lounas??
+            </a>
+            <span class="text-sm text-gray-600 dark:text-neutral-400"
+              >{{ vars.date }}</span
+            >
+          </div>
+
+          <!-- Settings Gear Icon -->
+          <button
+            type="button"
+            class="hs-collapse-toggle py-2 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            data-hs-collapse="#mobile-settings"
+          >
+            <svg
+              class="size-5"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Collapsible Settings Menu -->
+        <div
+          id="mobile-settings"
+          class="hs-collapse hidden w-full overflow-hidden transition-[height] duration-300"
+        >
+          <div class="pb-3 flex gap-2">
+            <!-- City Dropdown -->
+            {% set city_items = [] %}
+            {% for c in vars.cities %}
+              {% set _ = city_items.append({'label': c['name'], 'url': url_for('index', **build_url(city=c['name'])), 'value': c['name']}) %}
+            {% endfor %}
+            <div class="hs-dropdown relative inline-flex flex-1">
+              {{ dropdown_button(vars.selected_city) }}
+              {{ dropdown_menu(city_items, vars.selected_city, min_width="min-w-32") }}
+            </div>
+
+            <!-- Language Dropdown -->
+            {%
+              set lang_items = [
+              {'label': 'EN', 'url': url_for('index', **build_url(lang='en')), 'value': 'en'},
+              {'label': 'FI', 'url': url_for('index', **build_url(lang='fi')), 'value': 'fi'} ]
+            %}
+            <div class="hs-dropdown relative inline-flex">
+              {{ dropdown_button('FI' if vars.lang == 'fi' else 'EN') }}
+              {{ dropdown_menu(lang_items, vars.lang, min_width="min-w-32") }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Divider -->
+        <div class="border-t border-gray-200 dark:border-neutral-700"></div>
+
+        <!-- Day Tabs -->
+        <div class="flex overflow-x-auto py-2">
+          <div class="flex gap-1 min-w-full">
+            {%
+              for day in ['monday', "tuesday", "wednesday", "thursday", "friday",
+              "saturday", "sunday"]
+            %}
+              {% if vars.selected_day == day %}
+                <a
+                  href="{{ url_for('index', **build_url(day=day)) }}"
+                  class="flex-1 py-2 px-2 text-center text-sm
+                  font-medium rounded-lg whitespace-nowrap bg-primary
+                  text-white"
+                >
+                  {{ day.capitalize()[:3] }}
+                </a>
+              {% else %}
+                <a
+                  href="{{ url_for('index', **build_url(day=day)) }}"
+                  class="flex-1 py-2 px-2 text-center text-sm font-medium rounded-lg hover:bg-gray-100 whitespace-nowrap dark:text-neutral-200 dark:hover:bg-neutral-700"
+                >
+                  {{ day.capitalize()[:3] }}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Layout -->
+      <div class="hidden lg:flex justify-between items-center py-3">
+        <!-- Left Section: Logo and Day Selector -->
+        <div class="flex items-center gap-3">
+          <!-- Logo/Brand -->
+          <div class="flex flex-col items-start">
+            <a class="text-xl sm:text-2xl xl:text-3xl font-bold" href="#">
+              Missä Lounas??
+            </a>
+            <span class="text-sm text-gray-600 dark:text-neutral-400"
+              >{{ vars.date }}</span
+            >
+          </div>
+
+          <!-- Desktop Day Buttons -->
+          <div class="flex items-center gap-x-1">
+            {%
+              for day in ['monday', "tuesday", "wednesday", "thursday", "friday",
+              "saturday", "sunday"]
+            %}
+              {% if vars.selected_day == day %}
+                <a
+                  href="{{ url_for('index', **build_url(day=day)) }}"
+                  class="py-2 px-3 inline-flex items-center gap-x-2
+                  text-sm font-medium rounded-lg text-white bg-primary focus:outline-none disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  {{ day.capitalize() }}
+                </a>
+              {% else %}
+                <a
+                  href="{{ url_for('index', **build_url(day=day)) }}"
+                  class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                >
+                  {{ day.capitalize() }}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Right Section: City and Language Dropdowns -->
+        <div class="flex items-center gap-2">
+          <!-- City Dropdown -->
+          {% set city_items = [] %}
+          {% for c in vars.cities %}
+            {% set _ = city_items.append({'label': c['name'], 'url': url_for('index', **build_url(city=c['name'])), 'value': c['name']}) %}
+          {% endfor %}
+          <div class="hs-dropdown relative inline-flex">
+            {{ dropdown_button(vars.selected_city) }}
+            {{ dropdown_menu(city_items, vars.selected_city) }}
+          </div>
+
+          <!-- Language Dropdown -->
+          {%
+            set lang_items = [
+            {'label': 'EN', 'url': url_for('index', **build_url(lang='en')), 'value': 'en'},
+            {'label': 'FI', 'url': url_for('index', **build_url(lang='fi')), 'value': 'fi'} ]
+          %}
+          <div class="hs-dropdown relative inline-flex">
+            {{ dropdown_button('FI' if vars.lang == 'fi' else 'EN') }}
+            {{ dropdown_menu(lang_items, vars.lang) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+{% endmacro %}
