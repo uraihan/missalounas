@@ -43,7 +43,7 @@ async def get_menu(
     # all_areas = utils.get_all_areas(city, db)
 
     menus = utils.get_weekly_menu(city, area, lang, selected_date, db)
-    print(menus)
+    # print(menus)
 
     return menus
 
