@@ -17,7 +17,7 @@ from src.shared.config import DATE_FORMAT, DEFAULT_CITY, get_db_string
 def get_cities(db: psycopg.Connection) -> list[dict[str, str | int]]:
     db_string = get_db_string()
     cities = db.execute("SELECT * FROM cities").fetchall()
-    print(cities)
+    # print(cities)
 
     return cities
 
@@ -34,7 +34,7 @@ def get_all_areas(selected_city: str, db: psycopg.Connection) -> list[dict[str, 
         """,
         (selected_city,),
     ).fetchall()
-    print(areas)
+    # print(areas)
 
     return areas
 
@@ -62,6 +62,31 @@ def get_weekly_menu(
 
     city_id = db.execute("SELECT id FROM cities WHERE name = %s", (city,)).fetchone()
     city_id = city_id["id"]
+    query2 = """
+        WITH date_series as (
+            SELECT generate_series(%s::date, %s::date, '1 day'::interval) AS date
+        ),
+        restaurant_set AS (
+            SELECT id AS restaurant_id, name AS restaurant_name
+            FROM restaurants
+            WHERE city_id = %s AND area = %s
+        )
+        SELECT
+            ds.date AS date,
+            rs.restaurant_name AS restaurant_name,
+            f.menu_uid AS menu_uid,
+            f.menu_type AS menu_type,
+            ARRAY_AGG(f.name ORDER BY f.created_at) AS menu_name,
+            ARRAY_AGG(f.diets) AS menu_diets
+        FROM date_series ds
+        CROSS JOIN restaurant_set rs
+        LEFT JOIN foods f on f.restaurant_id = rs.restaurant_id
+            AND f.date = ds.date
+            AND f.lang = %s
+        GROUP BY ds.date, rs.restaurant_name, f.menu_uid, f.menu_type
+        ORDER BY ds.date, rs.restaurant_name
+    """
+
     query = """
         SELECT
             f.date AS date,
@@ -80,8 +105,11 @@ def get_weekly_menu(
         ORDER BY f.date, r.name
     """
 
+    # results = db.execute(
+    #     query, (week_start, week_end, selected_lang, city_id, selected_area)
+    # ).fetchall()
     results = db.execute(
-        query, (week_start, week_end, selected_lang, city_id, selected_area)
+        query2, (week_start, week_end, city_id, selected_area, selected_lang)
     ).fetchall()
 
     # todays_menu = {}
@@ -96,11 +124,13 @@ def get_weekly_menu(
         foods = row.get("menu_name")
         diets = row.get("menu_diets")
 
+        rest_list = restaurants[menu_date][restaurant_name]
+
         if menu_uid is None:
             # todays_menu[restaurant_name] = None
             continue
 
-        restaurants[menu_date][restaurant_name].append(
+        rest_list.append(
             MenuGroup(
                 uid=menu_uid,
                 group_name=menu_type or "",
