@@ -18,6 +18,7 @@
 
 <style>
   main {
-    margin-inline: 10%;
+    margin-inline: 5%;
+    margin-top: 1.25rem;
   }
 </style>
