@@ -12,6 +12,7 @@
     "npm:@vitest/browser-playwright@^4.1.8": "4.1.10_playwright@1.62.0_vitest@4.1.10_vite@8.1.0",
     "npm:bits-ui@^2.18.1": "2.18.1_@internationalized+date@3.12.3_svelte@5.56.4_@sveltejs+kit@2.67.0__@sveltejs+vite-plugin-svelte@7.1.2___svelte@5.56.4___vite@8.1.0__svelte@5.56.4__typescript@6.0.3__vite@8.1.0",
     "npm:clsx@^2.1.1": "2.1.1",
+    "npm:mode-watcher@^1.1.0": "1.1.0_svelte@5.56.4",
     "npm:orval@^8.24.0": "8.24.0_typescript@6.0.3",
     "npm:playwright@^1.60.0": "1.62.0",
     "npm:shadcn-svelte@^1.5.0": "1.5.0_svelte@5.56.4",
@@ -863,9 +864,9 @@
         "@floating-ui/dom",
         "@internationalized/date",
         "esm-env",
-        "runed",
+        "runed@0.35.1_@sveltejs+kit@2.67.0__@sveltejs+vite-plugin-svelte@7.1.2___svelte@5.56.4___vite@8.1.0__svelte@5.56.4__typescript@6.0.3__vite@8.1.0_svelte@5.56.4",
         "svelte",
-        "svelte-toolbelt",
+        "svelte-toolbelt@0.10.6_svelte@5.56.4_@sveltejs+kit@2.67.0__@sveltejs+vite-plugin-svelte@7.1.2___svelte@5.56.4___vite@8.1.0__svelte@5.56.4__typescript@6.0.3__vite@8.1.0",
         "tabbable"
       ]
     },
@@ -1263,6 +1264,14 @@
         "brace-expansion"
       ]
     },
+    "mode-watcher@1.1.0_svelte@5.56.4": {
+      "integrity": "sha512-mUT9RRGPDYenk59qJauN1rhsIMKBmWA3xMF+uRwE8MW/tjhaDSCCARqkSuDTq8vr4/2KcAxIGVjACxTjdk5C3g==",
+      "dependencies": [
+        "runed@0.25.0_svelte@5.56.4",
+        "svelte",
+        "svelte-toolbelt@0.7.1_svelte@5.56.4"
+      ]
+    },
     "mri@1.2.0": {
       "integrity": "sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA=="
     },
@@ -1428,6 +1437,20 @@
       ],
       "bin": true
     },
+    "runed@0.23.4_svelte@5.56.4": {
+      "integrity": "sha512-9q8oUiBYeXIDLWNK5DfCWlkL0EW3oGbk845VdKlPeia28l751VpfesaB/+7pI6rnbx1I6rqoZ2fZxptOJLxILA==",
+      "dependencies": [
+        "esm-env",
+        "svelte"
+      ]
+    },
+    "runed@0.25.0_svelte@5.56.4": {
+      "integrity": "sha512-7+ma4AG9FT2sWQEA0Egf6mb7PBT2vHyuHail1ie8ropfSjvZGtEAx8YTmUjv/APCsdRRxEVvArNjALk9zFSOrg==",
+      "dependencies": [
+        "esm-env",
+        "svelte"
+      ]
+    },
     "runed@0.35.1_@sveltejs+kit@2.67.0__@sveltejs+vite-plugin-svelte@7.1.2___svelte@5.56.4___vite@8.1.0__svelte@5.56.4__typescript@6.0.3__vite@8.1.0_svelte@5.56.4": {
       "integrity": "sha512-2F4Q/FZzbeJTFdIS/PuOoPRSm92sA2LhzTnv6FXhCoENb3huf5+fDuNOg1LNvGOouy3u/225qxmuJvcV3IZK5Q==",
       "dependencies": [
@@ -1523,7 +1546,16 @@
       "integrity": "sha512-YWuX+RE+CnWYx09yseAe4ZVMM7e7GRFZM6OYWpBKOb++s+SQ8RBIMMe+Bs/CznBMc0QPLjr+vDBxTAkozXsFXQ==",
       "dependencies": [
         "clsx",
-        "runed",
+        "runed@0.35.1_@sveltejs+kit@2.67.0__@sveltejs+vite-plugin-svelte@7.1.2___svelte@5.56.4___vite@8.1.0__svelte@5.56.4__typescript@6.0.3__vite@8.1.0_svelte@5.56.4",
+        "style-to-object",
+        "svelte"
+      ]
+    },
+    "svelte-toolbelt@0.7.1_svelte@5.56.4": {
+      "integrity": "sha512-HcBOcR17Vx9bjaOceUvxkY3nGmbBmCBBbuWLLEWO6jtmWH8f/QoWmbyUfQZrpDINH39en1b8mptfPQT9VKQ1xQ==",
+      "dependencies": [
+        "clsx",
+        "runed@0.23.4_svelte@5.56.4",
         "style-to-object",
         "svelte"
       ]
@@ -1741,6 +1773,7 @@
         "npm:@vitest/browser-playwright@^4.1.8",
         "npm:bits-ui@^2.18.1",
         "npm:clsx@^2.1.1",
+        "npm:mode-watcher@^1.1.0",
         "npm:orval@^8.24.0",
         "npm:playwright@^1.60.0",
         "npm:shadcn-svelte@^1.5.0",
