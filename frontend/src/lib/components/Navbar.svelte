@@ -57,7 +57,8 @@
         <button
           class={cn(
             "lg:text-lg",
-            calendar_date === selectedDate && "font-bold",
+            calendar_date === selectedDate &&
+              "font-bold rounded-full bg-green-700 px-3 py-1",
           )}
           onclick={() => (selectedDate = calendar_date)}
         >
