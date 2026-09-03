@@ -24,7 +24,8 @@
     bind:selectedDate
   />
 </header>
-<main class="mt-5 space-y-4">
+
+<main class="my-8 space-y-4">
   <AreaTab areaList={data.areas} initialSelectedArea={data.selectedArea} />
   <div class="grid grid-cols-4 gap-3 mt-2">
     {#if dayMenu}
