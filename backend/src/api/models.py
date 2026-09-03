@@ -22,3 +22,9 @@ class RestaurantData(msgspec.Struct):
 class WeeklyMenu(msgspec.Struct):
     calendar_date: date
     restaurant_data: list[RestaurantData]
+
+
+class City(msgspec.Struct):
+    id: int
+    name: str
+    default_area: str

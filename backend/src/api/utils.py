@@ -6,6 +6,7 @@ import psycopg
 from litestar import Request
 
 from src.api.models import (
+    City,
     MenuGroup,
     MenuItem,
     RestaurantData,
@@ -14,12 +15,14 @@ from src.api.models import (
 from src.shared.config import DATE_FORMAT, DEFAULT_CITY, get_db_string
 
 
-def get_cities(db: psycopg.Connection) -> list[dict[str, str | int]]:
-    db_string = get_db_string()
+def get_cities(db: psycopg.Connection) -> list[City]:
     cities = db.execute("SELECT * FROM cities").fetchall()
     # print(cities)
 
-    return cities
+    return [
+        City(id=row["id"], name=row["name"], default_area=row["default_area"])
+        for row in cities
+    ]
 
 
 def get_all_areas(selected_city: str, db: psycopg.Connection) -> list[dict[str, str]]:

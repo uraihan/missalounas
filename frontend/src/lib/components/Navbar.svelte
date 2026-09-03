@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { page } from "$app/state";
-  import type { CitiesGetCities200Item, WeeklyMenu } from "$lib/api/gen/model";
+  import type { City, WeeklyMenu } from "$lib/api/gen/model";
   import * as Select from "$lib/components/ui/select/index";
   import { cn } from "$lib/utils";
   import DarkModeSwitcher from "./DarkModeSwitcher.svelte";
@@ -13,7 +13,7 @@
     selectedCity,
     selectedDate = $bindable(),
   }: {
-    cities: CitiesGetCities200Item[];
+    cities: City[];
     menuData: WeeklyMenu[];
     selectedLang: string;
     selectedCity: string;

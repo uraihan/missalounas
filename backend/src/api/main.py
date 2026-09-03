@@ -11,7 +11,7 @@ from litestar.params import FromQuery
 
 from src.api import utils
 from src.api.db import create_pool, provide_db
-from src.api.models import WeeklyMenu
+from src.api.models import City, WeeklyMenu
 
 
 @asynccontextmanager
@@ -51,7 +51,7 @@ async def get_menu(
 @get("/cities")
 async def get_cities(
     db: NamedDependency[psycopg.Connection],
-) -> list[dict[str, str | int]]:
+) -> list[City]:
     return utils.get_cities(db)
 
 

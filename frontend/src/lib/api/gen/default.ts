@@ -8,7 +8,7 @@ import type {
   AreasGetAreas200Item,
   AreasGetAreas400,
   AreasGetAreasParams,
-  CitiesGetCities200Item,
+  City,
   MenuGetMenu400,
   MenuGetMenuParams,
   WeeklyMenu
@@ -73,7 +73,7 @@ export const menuGetMenu = async (params?: MenuGetMenuParams, options?: RequestI
 
 
 export type citiesGetCitiesResponse200 = {
-  data: CitiesGetCities200Item[]
+  data: City[]
   status: 200
 }
 

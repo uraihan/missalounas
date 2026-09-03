@@ -5,4 +5,8 @@
  * OpenAPI spec version: 0.5
  */
 
-export type CitiesGetCities200Item = {[key: string]: string | number};
+export interface City {
+  id: number;
+  name: string;
+  default_area: string;
+}

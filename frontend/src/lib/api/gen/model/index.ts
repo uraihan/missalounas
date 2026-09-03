@@ -9,7 +9,7 @@ export * from './areasGetAreas200Item.ts';
 export * from './areasGetAreas400.ts';
 export * from './areasGetAreas400Extra.ts';
 export * from './areasGetAreasParams.ts';
-export * from './citiesGetCities200Item.ts';
+export * from './city.ts';
 export * from './menuGetMenu400.ts';
 export * from './menuGetMenu400Extra.ts';
 export * from './menuGetMenuParams.ts';
