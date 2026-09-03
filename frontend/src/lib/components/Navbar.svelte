@@ -4,16 +4,7 @@
   import type { CitiesGetCities200Item, WeeklyMenu } from "$lib/api/gen/model";
   import * as Select from "$lib/components/ui/select/index";
   import { cn } from "$lib/utils";
-
-  const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
+  import DarkModeSwitcher from "./DarkModeSwitcher.svelte";
 
   let {
     cities,
@@ -81,6 +72,7 @@
   </div>
 
   <div class="flex items-center gap-6">
+    <DarkModeSwitcher />
     <Select.Root
       type="single"
       name="selectedCity"
