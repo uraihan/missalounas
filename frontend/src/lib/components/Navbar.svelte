@@ -23,24 +23,22 @@
     cities.find((c) => c.name === selectedCity)?.name ?? "Select a city",
   );
 
-  function selectCity(city: string) {
-    selectedCity = city;
-    const params = new URLSearchParams(page.url.searchParams);
-    params.set("city", city);
-    params.delete("area");
-
-    goto(`?${params}`, { keepFocus: true, noScroll: true, replaceState: true });
-  }
-
-  // available language
+  // available languages
   const lang = ["EN", "FI"];
-  // let selectedLang = $state(navigator.language.split("-").at(0)?.toUpperCase());
   const triggerLang = $derived(
-    lang.find((c) => c === selectedLang.toUpperCase()), // replace this with system language
+    // TODO: replace this with system language
+    lang.find((c) => c === selectedLang.toUpperCase()),
   );
 
-  // const today = Date.now();
-  // const date = new Date(today).toLocaleDateString("fi-FI");
+  function selectQuery(query: "city" | "lang", newValue: string) {
+    const params = new URLSearchParams(page.url.searchParams);
+    params.set(query, query === "lang" ? newValue.toLowerCase() : newValue);
+
+    if (query === "city") {
+      params.delete("area");
+    }
+    goto(`?${params}`, { keepFocus: true, noScroll: true, replaceState: true });
+  }
 </script>
 
 <nav class="flex justify-center lg:justify-between">
@@ -77,7 +75,7 @@
       type="single"
       name="selectedCity"
       bind:value={selectedCity}
-      onValueChange={selectCity}
+      onValueChange={(value) => selectQuery("city", value)}
     >
       <Select.Trigger class="w-[180px]">{triggerCity}</Select.Trigger>
       <Select.Content>
@@ -92,7 +90,12 @@
       </Select.Content>
     </Select.Root>
 
-    <Select.Root type="single" name="selectedLang" bind:value={selectedLang}>
+    <Select.Root
+      type="single"
+      name="selectedLang"
+      bind:value={selectedLang}
+      onValueChange={(value) => selectQuery("lang", value)}
+    >
       <Select.Trigger class="w-[180px]">{triggerLang}</Select.Trigger>
       <Select.Content>
         <Select.Group>
