@@ -19,6 +19,6 @@
 <style>
   main {
     margin-inline: 5%;
-    margin-top: 1.25rem;
+    margin-block: 1.25rem;
   }
 </style>
