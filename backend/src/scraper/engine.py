@@ -56,7 +56,12 @@ if __name__ == "__main__":
     print("Running Restaurant Scraper...")
     # PARSING
     collect_data = []
-    for city_name, city_data in CITIES:
+    # for city_name, city_data in CITIES:
+    for item in CITIES:
+        city_name = item.get("name")
+        default_area = item.get("default_area")
+        city_data = item.get("data")
+
         print("===========================")
         print(f"Processing Restaurants in {city_name}...\n--------------------")
         city_data = utils.unpickled_city_dict(city_data)
@@ -68,7 +73,14 @@ if __name__ == "__main__":
         ]
         restaurants_in_city = list(itertools.chain.from_iterable(restaurants_in_city))
 
-        collect_data.append({"city": city_name, "restaurants": restaurants_in_city})
+        # collect_data.append({"city": city_name, "restaurants": restaurants_in_city})
+        collect_data.append(
+            {
+                "city": city_name,
+                "default_area": default_area,
+                "restaurants": restaurants_in_city,
+            }
+        )
 
         print("-----------------------")
     # Sanity check
@@ -89,9 +101,12 @@ if __name__ == "__main__":
     #
     for item in collect_data:
         city = item["city"]
+        default_area = item["default_area"]
+
         print(f"Insert restaurant menus in {city}")
         restaurant_data = item.get("restaurants")
-        city_id = db_interface.insert_city(city, db_interface.init_db())
+        # city_id = db_interface.insert_city(city, db_interface.init_db())
+        city_id = db_interface.insert_city(city, default_area, db_interface.init_db())
         db_interface.insert_restaurants(
             city_id, restaurant_data, db_interface.init_db()
         )

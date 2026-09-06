@@ -64,6 +64,8 @@ def get_weekly_menu(
     week_end = week_start + timedelta(days=6)
 
     city_id = db.execute("SELECT id FROM cities WHERE name = %s", (city,)).fetchone()
+    # print(city)
+    # print(city_id)
     city_id = city_id["id"]
     query2 = """
         WITH date_series as (

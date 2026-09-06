@@ -55,15 +55,15 @@ def create_tables():
         conn.commit()
 
 
-def insert_city(city: str, db: psycopg.Connection):
+def insert_city(city: str, default_area: str, db: psycopg.Connection) -> int:
     row = db.execute(
         """
-        INSERT INTO cities (name)
-        VALUES (%s)
+        INSERT INTO cities (name, default_area)
+        VALUES (%s, %s)
         ON CONFLICT (name) DO NOTHING
         RETURNING id
     """,
-        (city,),
+        (city, default_area),
     ).fetchone()
 
     if row:

@@ -157,7 +157,11 @@ turku = [
 ]
 
 
-CITIES = [("Tampere", tampere), ("Helsinki", helsinki), ("Turku", turku)]
+CITIES = [
+    {"name": "Tampere", "default_area": "Hervanta", "data": tampere},
+    {"name": "Helsinki", "default_area": "Keskusta", "data": helsinki},
+    {"name": "Turku", "default_area": "UTU Kampus", "data": turku},
+]
 
 URLS = {
     "juvenes": "https://fi.jamix.cloud/apps/menuservice/rest/haku/menu/93077/{id}?lang={lang}",
