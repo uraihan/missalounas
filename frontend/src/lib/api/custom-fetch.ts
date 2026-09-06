@@ -6,7 +6,7 @@ const getUrl = (contextUrl: string): string => {
     ? "http://backend:8010"
     : "http://localhost:3000";
 
-  const requestUrl = new URL(`${baseUrl}${pathname}${search}`);
+  const requestUrl = new URL(`${pathname}${search}`, baseUrl);
 
   return requestUrl.toString();
 };
@@ -16,11 +16,13 @@ export const customFetch = async <T>(
   options?: RequestInit,
 ): Promise<T> => {
   // const requestUrl = getUrl(url);
-  const baseUrl = process.env.DEPLOY_ENV === "PROD"
-    ? "http://backend:8010"
-    : "http://localhost:8010";
-  const response = await fetch(`${baseUrl}${url}`, options);
-  const data = await response.json();
+  const baseUrl = getUrl(url);
+  const response = await fetch(baseUrl, options);
 
-  return { status: response.status, data } as T;
+  const body = [204, 205, 304].includes(response.status)
+    ? null
+    : await response.text();
+  const data = body ? JSON.parse(body) : {};
+
+  return { data, status: response.status, headers: response.headers } as T;
 };

@@ -14,6 +14,7 @@ import type {
   WeeklyMenu
 } from './model';
 
+import { customFetch } from '../custom-fetch.ts';
 
 
 export type menuGetMenuResponse200 = {
@@ -47,29 +48,22 @@ export const getMenuGetMenuUrl = (params?: MenuGetMenuParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `http://localhost:8010/menu?${stringifiedParams}` : `http://localhost:8010/menu`
+  return stringifiedParams.length > 0 ? `/menu?${stringifiedParams}` : `/menu`
 }
 
 /**
  * @summary GetMenu
  */
-export const menuGetMenu = async (params?: MenuGetMenuParams, options?: RequestInit): Promise<menuGetMenuResponse> => {
+export const menuGetMenu = async (params?: MenuGetMenuParams, options?: Parameters<typeof customFetch>[1]): Promise<menuGetMenuResponse> => {
 
-  const res = await fetch(getMenuGetMenuUrl(params),
+  return customFetch<menuGetMenuResponse>(getMenuGetMenuUrl(params),
   {
     ...options,
     method: 'GET'
 
 
   }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: menuGetMenuResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as menuGetMenuResponse
-}
+);}
 
 
 export type citiesGetCitiesResponse200 = {
@@ -89,29 +83,22 @@ export const getCitiesGetCitiesUrl = () => {
 
 
 
-  return `http://localhost:8010/cities`
+  return `/cities`
 }
 
 /**
  * @summary GetCities
  */
-export const citiesGetCities = async ( options?: RequestInit): Promise<citiesGetCitiesResponse> => {
+export const citiesGetCities = async ( options?: Parameters<typeof customFetch>[1]): Promise<citiesGetCitiesResponse> => {
 
-  const res = await fetch(getCitiesGetCitiesUrl(),
+  return customFetch<citiesGetCitiesResponse>(getCitiesGetCitiesUrl(),
   {
     ...options,
     method: 'GET'
 
 
   }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: citiesGetCitiesResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as citiesGetCitiesResponse
-}
+);}
 
 
 export type areasGetAreasResponse200 = {
@@ -145,28 +132,21 @@ export const getAreasGetAreasUrl = (params: AreasGetAreasParams,) => {
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `http://localhost:8010/areas?${stringifiedParams}` : `http://localhost:8010/areas`
+  return stringifiedParams.length > 0 ? `/areas?${stringifiedParams}` : `/areas`
 }
 
 /**
  * @summary GetAreas
  */
-export const areasGetAreas = async (params: AreasGetAreasParams, options?: RequestInit): Promise<areasGetAreasResponse> => {
+export const areasGetAreas = async (params: AreasGetAreasParams, options?: Parameters<typeof customFetch>[1]): Promise<areasGetAreasResponse> => {
 
-  const res = await fetch(getAreasGetAreasUrl(params),
+  return customFetch<areasGetAreasResponse>(getAreasGetAreasUrl(params),
   {
     ...options,
     method: 'GET'
 
 
   }
-)
-
-
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-
-  const data: areasGetAreasResponse['data'] = body ? JSON.parse(body) : {}
-  return { data, status: res.status, headers: res.headers } as areasGetAreasResponse
-}
+);}
 
 
