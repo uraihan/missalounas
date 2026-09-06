@@ -1,17 +1,17 @@
 services:
-  # reverse-proxy:
-  #   image: traefik:v3.6
-  #   privileged: true
-  #   command:
-  #     - "--api.insecure=true"
-  #     - "--providers.docker=true"
-  #     - "--providers.docker.exposedbydefault=false"
-  #     - "--entrypoints.web.address=:80"
-  #   ports:
-  #     - "80:80"
-  #     - "8010:8010"
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
+  reverse-proxy:
+    image: traefik:v3.6
+    privileged: true
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
   dbmate:
     image: amacneil/dbmate:2.34.1
@@ -62,34 +62,44 @@ services:
     depends_on:
       dbmate:
         condition: service_completed_successfully
+    develop:
+      watch:
+        - action: sync
+          path: ./backend
+          target: /app
+          ignore:
+            - .venv/
+        - action: rebuild
+          path: ./backend/uv.lock
 
   # frontend:
   #   build:
   #     context: ./frontend
   #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - .env
-  #   # environment:
-  #   # - API_BASE=http://backend:8000
-  #   # - ORIGIN=${ORIGIN_URL} # This is temporary and only in dev
-  #   depends_on:
-  #     - backend
-
-  # app:
-  #   build: .
   #   labels:
   #     - "traefik.enable=true"
   #     - "traefik.http.routers.app.entrypoints=web"
   #     - "traefik.http.routers.app.rule=Host(`localhost`)"
+  #     - "traefik.http.services.app.loadbalancer.server.port=3000"
   #   ports:
-  #     - "5000:5000"
+  #     - "3000:3000"
   #   env_file:
   #     - .env
   #   depends_on:
-  #     db:
-  #       condition: service_healthy
-
+  #     - backend
+  #   develop:
+  #     watch:
+  #       - action: sync
+  #         path: ./frontend
+  #         target: /app
+  #         ignore:
+  #           - node_modules/
+  #           - .svelte-kit/
+  #           - build/
+  #       - action: rebuild
+  #         path: ./frontend/package.json
+  #       - action: rebuild
+  #         path: ./frontend/deno.lock
 volumes:
-  pgdata:
+  postgres_db:
+    external: true
