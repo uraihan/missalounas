@@ -42,9 +42,9 @@
               <div>
                 <h2 class="font-semibold dark:text-white">{menu.group_name}</h2>
                 {#each menu.menu_item_list as menuItem}
-                  <div class="flex justify-between gap-8 items-center my-1">
+                  <div class="flex flex-col justify-between">
                     <p>{menuItem.name}</p>
-                    <p class="text-end">{menuItem.diet}</p>
+                    <p class="text-start pl-4">({menuItem.diet})</p>
                   </div>
                 {/each}
               </div>
