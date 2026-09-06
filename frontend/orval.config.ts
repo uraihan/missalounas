@@ -10,7 +10,12 @@ export default defineConfig({
       target: "./src/lib/api/gen",
       schemas: "./src/lib/api/gen/model",
       client: "fetch",
-      baseUrl: "http://localhost:8010", // TODO: make this configurable via dotenv files
+      override: {
+        mutator: {
+          path: "./src/lib/api/custom-fetch.ts",
+          name: "customFetch",
+        },
+      },
       clean: true,
     },
   },
