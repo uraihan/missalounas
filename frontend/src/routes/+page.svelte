@@ -33,13 +33,14 @@
         <!-- each menu data is grouped per calendar day. has to be deconstructed in page.server.ts -->
         <Card.Root class="flex-1">
           <Card.Header>
-            <Card.Title class="text-xl">{restaurant.restaurant_name}</Card.Title
-            >
+            <Card.Title class="text-xl font-bold dark:text-white">
+              {restaurant.restaurant_name}
+            </Card.Title>
           </Card.Header>
           <Card.Content class="flex flex-col gap-4">
             {#each restaurant.menu_group_list as menu}
               <div>
-                <h2 class="font-semibold">{menu.group_name}</h2>
+                <h2 class="font-semibold dark:text-white">{menu.group_name}</h2>
                 {#each menu.menu_item_list as menuItem}
                   <div class="flex justify-between gap-8 items-center my-1">
                     <p>{menuItem.name}</p>
