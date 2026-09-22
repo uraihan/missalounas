@@ -44,7 +44,9 @@
                 {#each menu.menu_item_list as menuItem}
                   <div class="flex flex-col justify-between">
                     <p>{menuItem.name}</p>
-                    <p class="text-start pl-4">({menuItem.diet})</p>
+                    {#if menuItem.diet}
+                      <p class="text-start pl-4">({menuItem.diet})</p>
+                    {/if}
                   </div>
                 {/each}
               </div>

@@ -1,6 +1,6 @@
 const getUrl = (contextUrl: string): string => {
   const baseUrl = process.env.DEPLOY_ENV === "PROD"
-    ? "http://backend:8010"
+    ? "http://backend:8000"
     : "http://localhost:8010";
 
   const requestUrl = new URL(contextUrl, baseUrl);
