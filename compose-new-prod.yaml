@@ -98,7 +98,7 @@ services:
       ofelia.job-exec.fetch-new-menu.schedule: "@every 30m"
       ofelia.job-exec.fetch-new-menu.command: "uv run python -m src.scraper.engine"
       ofelia.job-exec.fetch-new-menu.no-overlap: "true"
-    command: sh -c "uv run python -m src.scraper.engine && uv run uvicorn src.api.main:app --host 0.0.0.0 --port $BACKEND_PORT"
+    command: sh -c "mkdir log && uv run python -m src.scraper.engine && uv run uvicorn src.api.main:app --host 0.0.0.0 --port $BACKEND_PORT"
     ports:
       - "$BACKEND_PORT:$BACKEND_PORT"
     env_file:

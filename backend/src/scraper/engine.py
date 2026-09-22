@@ -9,7 +9,9 @@ from src.scraper.parsers.sodexo.sodexo import SodexoParser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    filename="./log/webscraper_engine_run.log", encoding="utf-8", level=logging.DEBUG
+    filename="./backend/log/webscraper_engine_run.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
 )
 
 
