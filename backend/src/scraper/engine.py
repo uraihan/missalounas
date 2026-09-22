@@ -1,5 +1,6 @@
 import itertools
 import logging
+from pathlib import Path
 
 from src.scraper import db_interface, utils
 from src.scraper.config import CITIES
@@ -7,9 +8,12 @@ from src.scraper.parsers.compass_group.compass_group import CompassGroupParser
 from src.scraper.parsers.juvenes.juvenes import JuvenesScraper
 from src.scraper.parsers.sodexo.sodexo import SodexoParser
 
+log_dir = Path("log")
+log_dir.mkdir(parents=True, exist_ok=True)
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    filename="./backend/log/webscraper_engine_run.log",
+    filename=log_dir / "webscraper_engine_run.log",
     encoding="utf-8",
     level=logging.DEBUG,
 )
