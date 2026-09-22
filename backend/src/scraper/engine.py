@@ -1,11 +1,11 @@
 import itertools
 import logging
 
-from scraper.parsers.compass_group.compass_group import CompassGroupParser
-from scraper.parsers.juvenes.juvenes import JuvenesScraper
-from scraper.parsers.sodexo.sodexo import SodexoParser
 from src.scraper import db_interface, utils
 from src.scraper.config import CITIES
+from src.scraper.parsers.compass_group.compass_group import CompassGroupParser
+from src.scraper.parsers.juvenes.juvenes import JuvenesScraper
+from src.scraper.parsers.sodexo.sodexo import SodexoParser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
