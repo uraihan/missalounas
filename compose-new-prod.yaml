@@ -4,7 +4,6 @@ services:
     privileged: true
     command:
       # Basic Networking Proxy
-      - "--api.insecure=true"
       - "--providers.docker=true"
       - "--entrypoints.web.address=:80"
       - "--providers.docker.exposedbydefault=false"
