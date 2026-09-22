@@ -79,7 +79,7 @@ services:
     image: mcuadros/ofelia:latest
     depends_on:
       - backend
-      - docker-proxy
+      # - docker-proxy
     ports:
       - "127.0.0.1:8090:8090"
     command: daemon --docker
