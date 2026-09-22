@@ -133,10 +133,10 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.app.entrypoints=websecure"
       - "traefik.http.routers.app.rule=Host(`missalounas.fi`)"
-      - "traefik.http.routers.app.tls.certresolver=myresolver"
+      - "traefik.http.routers.app.tls.certresolver=letsencrypt"
       - "traefik.http.services.app.loadbalancer.server.port=$FRONTEND_PORT"
     ports:
-      - "$FRONTEND_PORT:$FRONTEND_PORT"
+      - $FRONTEND_PORT
     env_file:
       - .env
     depends_on:
