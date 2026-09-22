@@ -60,34 +60,34 @@ services:
       timeout: 5s
       retries: 5
 
-  # docker-proxy:
-  #   image: tecnativa/docker-socket-proxy:latest
-  #   privileged: true
-  #   environment:
-  #     CONTAINERS: 1
-  #     EXEC: 1
-  #     EVENTS: 1
-  #     PING: 1
-  #     VERSION: 1
-  #     POST: 1
-  #   networks:
-  #     - docker-socket
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    privileged: true
+    environment:
+      CONTAINERS: 1
+      EXEC: 1
+      EVENTS: 1
+      PING: 1
+      VERSION: 1
+      POST: 1
+    networks:
+      - docker-socket
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   ofelia:
     image: mcuadros/ofelia:latest
     depends_on:
       - backend
-      # - docker-proxy
+      - docker-proxy
     ports:
       - "127.0.0.1:8090:8090"
     command: daemon --docker
-    # environment:
-    #   DOCKER_HOST: tcp://docker-proxy:2375
+    environment:
+      DOCKER_HOST: tcp://docker-proxy:2375
     networks:
       - dokploy-network
-      # - docker-socket
+      - docker-socket
 
   backend:
     build:
@@ -164,5 +164,5 @@ volumes:
 networks:
   dokploy-network:
     external: true
-  # docker-socket:
-  #   driver: bridge
+  docker-socket:
+    driver: bridge
