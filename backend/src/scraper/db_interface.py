@@ -172,9 +172,17 @@ def insert_restaurants(city_id: int, weekly_menu, db: Session):
             #         lang,
             #     ),
             # )
-            insert_food = (
-                pg_insert(foods)
-                .values(
+            existing_food = db.execute(
+                select(foods.c.id).where(
+                    foods.c.name == food_name,
+                    foods.c.date == date,
+                    foods.c.menu_uid == menu_uid,
+                    foods.c.restaurant_id == restaurant_id,
+                    foods.c.lang == lang,
+                )
+            ).fetchone()
+            if existing_food is None:
+                insert_food = pg_insert(foods).values(
                     name=food_name,
                     diets=diets,
                     menu_type=menu_type,
@@ -183,11 +191,7 @@ def insert_restaurants(city_id: int, weekly_menu, db: Session):
                     lang=lang,
                     restaurant_id=restaurant_id,
                 )
-                .on_conflict_do_nothing(
-                    index_elements=["name", "date", "menu_uid", "restaurant_id", "lang"]
-                )
-            )
-            db.execute(insert_food)
+                db.execute(insert_food)
     db.commit()
     # except psycopg.Error as e:
     #     db.rollback()
