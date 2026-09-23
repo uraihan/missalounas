@@ -37,5 +37,5 @@ foods = Table(
     Column("menu_uid", Integer),
     Column("date", Date),
     Column("lang", Text),
-    Column("menu_type", Integer, ForeignKey("cities.id")),
+    Column("restaurant_id", Integer, ForeignKey("restaurants.id")),
 )
