@@ -84,8 +84,8 @@ services:
       - "127.0.0.1:8090:8090"
     command: daemon --docker
     environment:
-      - DOCKER_HOST: tcp://docker-proxy:2375
-      - TZ: Europe/Helsinki
+      DOCKER_HOST: tcp://docker-proxy:2375
+      TZ: Europe/Helsinki
     networks:
       - dokploy-network
       - docker-socket
