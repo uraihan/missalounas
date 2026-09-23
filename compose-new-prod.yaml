@@ -84,7 +84,8 @@ services:
       - "127.0.0.1:8090:8090"
     command: daemon --docker
     environment:
-      DOCKER_HOST: tcp://docker-proxy:2375
+      - DOCKER_HOST: tcp://docker-proxy:2375
+      - TZ=Europe/Helsinki
     networks:
       - dokploy-network
       - docker-socket
@@ -95,9 +96,17 @@ services:
       dockerfile: Dockerfile
     labels:
       ofelia.enabled: "true"
-      ofelia.job-exec.fetch-new-menu.schedule: "@every 30m"
+
+      # Default schedule
+      ofelia.job-exec.fetch-new-menu.schedule: "@every 3h"
       ofelia.job-exec.fetch-new-menu.command: "uv run python -m src.scraper.engine"
       ofelia.job-exec.fetch-new-menu.no-overlap: "true"
+
+      # Peak hours schedule
+      ofelia.job-exec.fetch-peak-hours.schedule: "*/30 10-14 * * 1-5"
+      ofelia.job-exec.fetch-peak-hours.command: "uv run python -m src.scraper.engine"
+      ofelia.job-exec.fetch-peak-hours.no-overlap: "true"
+
     command: sh -c "uv run python -m src.scraper.engine && uv run uvicorn src.api.main:app --host 0.0.0.0 --port $BACKEND_PORT"
     ports:
       - "$BACKEND_PORT:$BACKEND_PORT"

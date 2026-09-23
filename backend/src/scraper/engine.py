@@ -1,6 +1,10 @@
+import argparse
 import itertools
 import logging
+import sys
+from datetime import datetime, time
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from src.scraper import db_interface, utils
 from src.scraper.config import CITIES
@@ -59,6 +63,31 @@ def parse_restaurants(chain: str, area_name: str, rest_list: dict[str, str]):
 
 
 if __name__ == "__main__":
+    # GUARDING CLAUSE FOR CRONJOB
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--peak", action="store_true", help="Specify this when running on peak hours"
+    )
+    args = parser.parse_args()
+
+    now = datetime.now(ZoneInfo("Europe/Helsinki"))
+    if args.peak:
+        if now.weekday() > 4:
+            print(f"{now}: Scraper is trying to start outside weekday. Exiting")
+            sys.exit(0)
+        current_time = now.time()
+        start_peak_time = time(10, 30)
+        end_peak_time = time(14, 0)
+
+        if not (start_peak_time <= current_time <= end_peak_time):
+            print(
+                f"{now}: Scraper is trying to start outside peak hours in weekday. Exiting"
+            )
+            sys.exit(0)
+        print(f"{now}: Scraper is running inside peak hours")
+    else:
+        print(f"{now}: Scraper is running outside peak hours")
+
     print("Running Restaurant Scraper...")
     # PARSING
     collect_data = []
