@@ -85,7 +85,7 @@ services:
     command: daemon --docker
     environment:
       - DOCKER_HOST: tcp://docker-proxy:2375
-      - TZ=Europe/Helsinki
+      - TZ: Europe/Helsinki
     networks:
       - dokploy-network
       - docker-socket
