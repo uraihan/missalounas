@@ -19,7 +19,9 @@ def get_db_string() -> str:
         db_port = os.getenv("DB_PORT", "5432")
 
         if db_type == "postgresql":
-            return f"{db_type}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+            return (
+                f"{db_type}+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+            )
         else:
             return f"dbname={db_name} user={db_user} host=db password={db_pass}"
 
