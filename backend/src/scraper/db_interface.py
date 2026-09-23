@@ -13,7 +13,7 @@ from src.shared.config import get_db_string
 
 
 def init_db() -> Session:
-    engine = create_engine(get_db_string())
+    engine = create_engine(get_db_string(mode="sqlalchemy"))
     LocalSession = sessionmaker(bind=engine, expire_on_commit=False)
     return LocalSession()
 

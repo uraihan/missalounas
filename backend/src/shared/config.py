@@ -1,11 +1,12 @@
 import os
+from typing import Literal
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-def get_db_string() -> str:
+def get_db_string(mode: Literal["psycopg", "sqlalchemy"] = "psycopg") -> str:
     if os.getenv("DB_URL"):
         db_url = os.getenv("DB_URL")
         return db_url
@@ -18,10 +19,12 @@ def get_db_string() -> str:
         db_host = os.getenv("DB_HOST", "db")
         db_port = os.getenv("DB_PORT", "5432")
 
-        if db_type == "postgresql":
+        if db_type == "postgresql" and mode == "sqlalchemy":
             return (
                 f"{db_type}+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
             )
+        elif db_type == "postgresql" and mode == "psycopg":
+            return f"{db_type}://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
         else:
             return f"dbname={db_name} user={db_user} host=db password={db_pass}"
 
