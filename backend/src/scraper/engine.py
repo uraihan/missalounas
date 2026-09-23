@@ -134,6 +134,7 @@ if __name__ == "__main__":
     # INSERT TO SQL
     # Create db table
     #
+    db = db_interface.init_db()
     for item in collect_data:
         city = item["city"]
         default_area = item["default_area"]
@@ -141,7 +142,10 @@ if __name__ == "__main__":
         print(f"Insert restaurant menus in {city}")
         restaurant_data = item.get("restaurants")
         # city_id = db_interface.insert_city(city, db_interface.init_db())
-        city_id = db_interface.insert_city(city, default_area, db_interface.init_db())
-        db_interface.insert_restaurants(
-            city_id, restaurant_data, db_interface.init_db()
-        )
+        try:
+            city_id = db_interface.insert_city(city, default_area, db)
+            db_interface.insert_restaurants(city_id, restaurant_data, db)
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Failed to process city {city}. Error log: {e}")
+            continue
